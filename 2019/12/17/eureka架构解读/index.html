@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="好记性不如烂笔头" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    eureka架构解读 |  奋斗的光
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/images/avatar.jpg" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-eureka架构解读"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  eureka架构解读
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2019/12/17/eureka%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/" class="article-date">
+  <time datetime="2019-12-16T16:31:16.000Z" itemprop="datePublished">2019-12-17</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Eureka/">Eureka</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">12 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="微服务注册中心-Eureka-架构深入解读"><a href="#微服务注册中心-Eureka-架构深入解读" class="headerlink" title="微服务注册中心 Eureka 架构深入解读"></a>微服务注册中心 Eureka 架构深入解读</h1><p>微服务架构中最核心的部分是服务治理，服务治理最基础的组件是注册中心。随着微服务架构的发展，出现了很多微服务架构的解决方案，其中包括我们熟知的 Dubbo 和 Spring Cloud。</p>
+<p>关于注册中心的解决方案，dubbo 支持了 Zookeeper、Redis、Multicast 和 Simple，官方推荐 Zookeeper。Spring Cloud 支持了 Zookeeper、Consul 和 Eureka，官方推荐 Eureka。</p>
+<p>两者之所以推荐不同的实现方式，原因在于组件的特点以及适用场景不同。简单来说：</p>
+<ul>
+<li><p>ZK 的设计原则是 CP，即强一致性和分区容错性。他保证数据的强一致性，但舍弃了可用性，<strong>如果出现网络问题可能会影响 ZK 的选举，导致 ZK 注册中心的不可用</strong>。</p>
+</li>
+<li><p>Eureka 的设计原则是 AP，即可用性和分区容错性。他保证了注册中心的可用性，但舍弃了数据一致性，<strong>各节点上的数据有可能是不一致的（会最终一致）</strong>。</p>
+<p>Eureka 采用纯 Java 实现，除实现了注册中心基本的服务注册和发现之外，极大的满足注册中心的可用性，即使只有一台服务可用，也可以保证注册中心的可用性。</p>
+</li>
+</ul>
+<p>本文将聚焦到 Eureka 的内部实现原理，先从微服务架构的部署图介绍 Eureka 的总体架构，然后剖析服务信息的存储结构，最后探究跟服务生命周期相关的服务注册机制、服务续约机制、服务注销机制、服务剔除机制、服务获取机制、和服务同步机制。</p>
+<h2 id="Eureka-总体架构"><a href="#Eureka-总体架构" class="headerlink" title="Eureka 总体架构"></a>Eureka 总体架构</h2><p>下面是 Eureka 注册中心部署在多个机房的架构图，这正是他高可用性的优势（Zookeeper 千万别这么部署）。</p>
+<p><img src="https://static001.infoq.cn/resource/image/8b/8b/8bf6e27c60dbfd717b6830263890368b.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>从组件功能看：</p>
+<ul>
+<li>黄色注册中心集群，分别部署在北京、天津、青岛机房；</li>
+<li>红色服务提供者，分别部署北京和青岛机房；</li>
+<li>淡绿色服务消费者，分别部署在北京和天津机房；</li>
+</ul>
+<p>从机房分布看：</p>
+<ul>
+<li>北京机房部署了注册中心、服务提供者和服务消费者；</li>
+<li>天津机房部署了注册中心和服务消费者；</li>
+<li>青岛机房部署了注册中心和服务提供者；</li>
+</ul>
+<h3 id="组件调用关系"><a href="#组件调用关系" class="headerlink" title="组件调用关系"></a>组件调用关系</h3><p><strong>服务提供者</strong></p>
+<ol>
+<li>启动后，向注册中心发起 register 请求，注册服务</li>
+<li>在运行过程中，定时向注册中心发送 renew 心跳，证明“我还活着”。</li>
+<li>停止服务提供者，向注册中心发起 cancel 请求，清空当前服务注册信息。</li>
+</ol>
+<p><strong>服务消费者</strong></p>
+<ol>
+<li>启动后，从注册中心拉取服务注册信息</li>
+<li>在运行过程中，定时更新服务注册信息。</li>
+<li>服务消费者发起远程调用：<br>a&gt; 服务消费者（北京）会从服务注册信息中选择同机房的服务提供者（北京），发起远程调用。只有同机房的服务提供者挂了才会选择其他机房的服务提供者（青岛）。<br>b&gt; 服务消费者（天津）因为同机房内没有服务提供者，则会按负载均衡算法选择北京或青岛的服务提供者，发起远程调用。</li>
+</ol>
+<p><strong>注册中心</strong></p>
+<ol>
+<li><p>启动后，从其他节点拉取服务注册信息。</p>
+</li>
+<li><p>运行过程中，定时运行 evict 任务，剔除没有按时 renew 的服务（包括非正常停止和网络故障的服务）。</p>
+</li>
+<li><p>运行过程中，接收到的 register、renew、cancel 请求，都会同步至其他注册中心节点。</p>
+<p>本文将详细说明上图中的 registry、register、renew、cancel、getRegistry、evict 的内部机制。</p>
+</li>
+</ol>
+<h2 id="数据存储结构"><a href="#数据存储结构" class="headerlink" title="数据存储结构"></a>数据存储结构</h2><p>既然是服务注册中心，必然要存储服务的信息，我们知道 ZK 是将服务信息保存在树形节点上。而下面是 Eureka 的数据存储结构：</p>
+<p><img src="https://static001.infoq.cn/resource/image/61/2a/61a26fffaeaf63d5dd5c0c2c5dd7852a.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>Eureka 的数据存储分了两层：数据存储层和缓存层。</p>
+<p>Eureka Client 在拉取服务信息时，先从缓存层获取（相当于 Redis），如果获取不到，先把数据存储层的数据加载到缓存中（相当于 Mysql），再从缓存中获取。值得注意的是，数据存储层的数据结构是服务信息，而缓存中保存的是经过处理加工过的、可以直接传输到 Eureka Client 的数据结构。</p>
+<p>Eureka 这样的数据结构设计是把内部的数据存储结构与对外的数据结构隔离开了，就像是我们平时在进行接口设计一样，对外输出的数据结构和数据库中的数据结构往往都是不一样的。</p>
+<p><strong>数据存储层</strong></p>
+<p>这里为什么说是存储层而不是持久层？因为 rigistry 本质上是一个双层的 ConcurrentHashMap，存储在内存中的。</p>
+<ul>
+<li><p>第一层的 key 是<code>spring.application.name</code>，value 是第二层 ConcurrentHashMap；</p>
+</li>
+<li><p>第二层 ConcurrentHashMap 的 key 是服务的 InstanceId，value 是 Lease 对象；</p>
+</li>
+<li><p>Lease 对象包含了服务详情和服务治理相关的属性。</p>
+<p><strong>二级缓存层</strong></p>
+</li>
+</ul>
+<p>Eureka 实现了二级缓存来保存即将要对外传输的服务信息，数据结构完全相同。</p>
+<ul>
+<li>一级缓存：<code>ConcurrentHashMap readOnlyCacheMap</code>，本质上是 HashMap，无过期时间，保存服务信息的对外输出数据结构。</li>
+<li>二级缓存：<code>Loading readWriteCacheMap</code>，本质上是 guava 的缓存，包含失效机制，保存服务信息的对外输出数据结构。</li>
+</ul>
+<p>既然是缓存，那必然要有更新机制，来保证数据的一致性。下面是缓存的更新机制：</p>
+<p><img src="https://static001.infoq.cn/resource/image/2d/c3/2dcf60f2fa8ec888f2b3262e6e9de5c3.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>更新机制包含删除和加载两个部分，上图黑色箭头表示删除缓存的动作，绿色表示加载或触发加载的动作。</p>
+<p><strong>删除二级缓存：</strong></p>
+<ol>
+<li>Eureka Client 发送 register、renew 和 cancel 请求并更新 registry 注册表之后，删除二级缓存；</li>
+<li>Eureka Server 自身的 Evict Task 剔除服务后，删除二级缓存；</li>
+<li>二级缓存本身设置了 guava 的失效机制，隔一段时间后自己自动失效；</li>
+</ol>
+<p><strong>加载二级缓存：</strong></p>
+<ol>
+<li>Eureka Client 发送 getRegistry 请求后，如果二级缓存中没有，就触发 guava 的 load，即从 registry 中获取原始服务信息后进行处理加工，再加载到二级缓存中。</li>
+<li>Eureka Server 更新一级缓存的时候，如果二级缓存没有数据，也会触发 guava 的 load。</li>
+</ol>
+<p><strong>更新一级缓存：</strong></p>
+<ol>
+<li><p>Eureka Server 内置了一个 TimerTask，定时将二级缓存中的数据同步到一级缓存（这个动作包括了删除和加载）。</p>
+<p>关于缓存的实现参考 ResponseCacheImpl</p>
+</li>
+</ol>
+<h3 id="服务注册机制"><a href="#服务注册机制" class="headerlink" title="服务注册机制"></a>服务注册机制</h3><p>服务提供者、服务消费者、以及服务注册中心自己，启动后都会向注册中心注册服务（如果配置了注册）。下图是介绍如何完成服务注册的：</p>
+<p><img src="https://static001.infoq.cn/resource/image/11/18/1120a85e1270610c0ac1eeba9e1d5718.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>注册中心服务接收到 register 请求后：</p>
+<ol>
+<li>保存服务信息，将服务信息保存到 registry 中；</li>
+<li>更新队列，将此事件添加到更新队列中，供 Eureka Client 增量同步服务信息使用。</li>
+<li>清空二级缓存，即 readWriteCacheMap，用于保证数据的一致性。</li>
+<li>更新阈值，供剔除服务使用。</li>
+<li>同步服务信息，将此事件同步至其他的 Eureka Server 节点。</li>
+</ol>
+<h3 id="服务续约机制"><a href="#服务续约机制" class="headerlink" title="服务续约机制"></a>服务续约机制</h3><p>服务注册后，要定时（默认 30S，可自己配置）向注册中心发送续约请求，告诉注册中心“我还活着”。</p>
+<p><img src="https://static001.infoq.cn/resource/image/d5/44/d54cd75f968b71a37cbf3139ecfa6a44.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>注册中心收到续约请求后：</p>
+<ol>
+<li><p>更新服务对象的最近续约时间，即 Lease 对象的 lastUpdateTimestamp;</p>
+</li>
+<li><p>同步服务信息，将此事件同步至其他的 Eureka Server 节点。</p>
+<p>剔除服务之前会先判断服务是否已经过期，判断服务是否过期的条件之一是续约时间和当前时间的差值是不是大于阈值。</p>
+</li>
+</ol>
+<h3 id="服务注销机制"><a href="#服务注销机制" class="headerlink" title="服务注销机制"></a>服务注销机制</h3><p>服务<strong>正常停止</strong>之前会向注册中心发送注销请求，告诉注册中心“我要下线了”。</p>
+<p><img src="https://static001.infoq.cn/resource/image/81/8e/8112c5bf591b4a32519f142220c2c28e.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>注册中心服务接收到 cancel 请求后：</p>
+<ol>
+<li><p>删除服务信息，将服务信息从 registry 中删除；</p>
+</li>
+<li><p>更新队列，将此事件添加到更新队列中，供 Eureka Client 增量同步服务信息使用。</p>
+</li>
+<li><p>清空二级缓存，即 readWriteCacheMap，用于保证数据的一致性。</p>
+</li>
+<li><p>更新阈值，供剔除服务使用。</p>
+</li>
+<li><p>同步服务信息，将此事件同步至其他的 Eureka Server 节点。</p>
+<p>服务正常停止才会发送 Cancel，如果是非正常停止，则不会发送，此服务由 Eureka Server 主动剔除。</p>
+</li>
+</ol>
+<h3 id="服务剔除机制"><a href="#服务剔除机制" class="headerlink" title="服务剔除机制"></a>服务剔除机制</h3><p>Eureka Server 提供了服务剔除的机制，用于剔除没有正常下线的服务。</p>
+<p><img src="https://static001.infoq.cn/resource/image/bd/60/bd003c6b9ddc4f13840443ca04920560.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>服务的剔除包括三个步骤，首先判断是否满足服务剔除的条件，然后找出过期的服务，最后执行剔除。</p>
+<p><strong>判断是否满足服务剔除的条件</strong></p>
+<p>有两种情况可以满足服务剔除的条件：</p>
+<ol>
+<li>关闭了自我保护</li>
+<li>如果开启了自我保护，需要进一步判断是 Eureka Server 出了问题，还是 Eureka Client 出了问题，如果是 Eureka Client 出了问题则进行剔除。</li>
+</ol>
+<p>这里比较核心的条件是自我保护机制，Eureka 自我保护机制是为了防止误杀服务而提供的一个机制。Eureka 的自我保护机制“谦虚”的认为如果大量服务都续约失败，则认为是自己出问题了（如自己断网了），也就不剔除了；反之，则是 Eureka Client 的问题，需要进行剔除。而<strong>自我保护阈值是区分 Eureka Client 还是 Eureka Server 出问题的临界值：如果超出阈值就表示大量服务可用，少量服务不可用，则判定是 Eureka Client 出了问题。如果未超出阈值就表示大量服务不可用，则判定是 Eureka Server 出了问题</strong>。</p>
+<p>条件 1 中如果关闭了自我保护，则统统认为是 Eureka Client 的问题，把没按时续约的服务都剔除掉（这里有剔除的最大值限制）。</p>
+<p>这里比较难理解的是阈值的计算：</p>
+<ul>
+<li>自我保护阈值 = 服务总数 * 每分钟续约数 * 自我保护阈值因子。</li>
+<li>每分钟续约数 =（60S/ 客户端续约间隔）</li>
+</ul>
+<p>最后自我保护阈值的计算公式为：</p>
+<p>自我保护阈值 = 服务总数 * （60S/ 客户端续约间隔） * 自我保护阈值因子。</p>
+<p><strong>举例</strong>：如果有 100 个服务，续约间隔是 30S，自我保护阈值 0.85。</p>
+<p>自我保护阈值 =100 * 60 / 30 * 0.85 = 170。</p>
+<p>如果上一分钟的续约数 =180&gt;170，则说明大量服务可用，是服务问题，进入剔除流程；</p>
+<p>如果上一分钟的续约数 =150&lt;170，则说明大量服务不可用，是注册中心自己的问题，进入自我保护模式，不进入剔除流程。</p>
+<p><strong>找出过期的服务</strong></p>
+<p>遍历所有的服务，判断上次续约时间距离当前时间大于阈值就标记为过期。并将这些过期的服务保存到集合中。</p>
+<p><strong>剔除服务</strong></p>
+<p>在剔除服务之前先计算剔除的数量，然后遍历过期服务，通过洗牌算法确保每次都公平的选择出要剔除的任务，最后进行剔除。</p>
+<p>执行剔除服务后：</p>
+<ol>
+<li><p>删除服务信息，从 registry 中删除服务。</p>
+</li>
+<li><p>更新队列，将当前剔除事件保存到更新队列中。</p>
+</li>
+<li><p>清空二级缓存，保证数据的一致性。</p>
+<p>实现过程参考 AbstractInstanceRegistry.evict() 方法。</p>
+</li>
+</ol>
+<h3 id="服务获取机制"><a href="#服务获取机制" class="headerlink" title="服务获取机制"></a>服务获取机制</h3><p>Eureka Client 获取服务有两种方式，全量同步和增量同步。获取流程是根据 Eureka Server 的多层数据结构进行的：</p>
+<p><img src="https://static001.infoq.cn/resource/image/7a/b6/7a28cef8df4ee96193ae1fa36aca34b6.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>无论是全量同步还是增量同步，都是先从缓存中获取，如果缓存中没有，则<strong>先加载到缓存中，再从缓存中获取。（registry 只保存数据结构，缓存中保存 ready 的服务信息。）</strong></p>
+<ol>
+<li>先从一级缓存中获取<br>a&gt; 先判断是否开启了一级缓存<br>b&gt; 如果开启了则从一级缓存中获取，如果存在则返回，如果没有，则从二级缓存中获取<br>d&gt; 如果未开启，则跳过一级缓存，从二级缓存中获取</li>
+<li>再从二级缓存中获取<br>a&gt; 如果二级缓存中存在，则直接返回；<br>b&gt; 如果二级缓存中不存在，则先将数据加载到二级缓存中，再从二级缓存中获取。注意加载时需要判断是增量同步还是全量同步，增量同步从 recentlyChangedQueue 中 load，全量同步从 registry 中 load。</li>
+</ol>
+<h3 id="服务同步机制"><a href="#服务同步机制" class="headerlink" title="服务同步机制"></a>服务同步机制</h3><p>服务同步机制是用来同步 Eureka Server 节点之间服务信息的。它包括 Eureka Server 启动时的同步，和运行过程中的同步。</p>
+<p><strong>启动时同步</strong></p>
+<p><img src="https://static001.infoq.cn/resource/image/04/68/0485b748af4f3bf0061672b9c13e0b68.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>Eureka Server 启动后，遍历 eurekaClient.getApplications 获取服务信息，并将服务信息注册到自己的 registry 中。</p>
+<p>注意这里是两层循环，第一层循环是为了保证已经拉取到服务信息，第二层循环是遍历拉取到的服务信息。</p>
+<p><strong>运行过程中同步</strong></p>
+<p><img src="https://static001.infoq.cn/resource/image/b6/64/b612ee78ac0703851b59bac9ca3b3564.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<p>当 Eureka Server 节点有 register、renew、cancel 请求进来时，会将这个请求封装成 TaskHolder 放到 acceptorQueue 队列中，然后经过一系列的处理，放到 batchWorkQueue 中。</p>
+<p><code>TaskExecutor.BatchWorkerRunnable</code>是个线程池，不断的从 batchWorkQueue 队列中 poll 出 TaskHolder，然后向其他 Eureka Server 节点发送同步请求。</p>
+<p>这里省略了两个部分：</p>
+<ul>
+<li>一个是在 acceptorQueue 向 batchWorkQueue 转化时，省略了中间的 processingOrder 和 pendingTasks 过程。</li>
+<li>另一个是当同步失败时，会将失败的 TaskHolder 保存到 reprocessQueue 中，重试处理。</li>
+</ul>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>对微服务解决方案 Dubbo 和 Spring Cloud 的对比非常多，这里对注册中心做个简单对比。</p>
+<p><img src="https://static001.infoq.cn/resource/image/ef/c4/ef69164a4afb2198cf4468c82f4a6cc4.png" alt="微服务注册中心Eureka架构深入解读"></p>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">Zookeeper</th>
+<th align="left">Eureka</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">设计原则</td>
+<td align="left">CP</td>
+<td align="left">AP</td>
+</tr>
+<tr>
+<td align="left">优点</td>
+<td align="left">数据强一致</td>
+<td align="left">服务高可用</td>
+</tr>
+<tr>
+<td align="left">缺点</td>
+<td align="left">网络分区会影响 Leader 选举，超过阈值后集群不可用</td>
+<td align="left">服务节点间的数据可能不一致； Client-Server 间的数据可能不一致；</td>
+</tr>
+<tr>
+<td align="left">适用场景</td>
+<td align="left">单机房集群，对数据一致性要求较高</td>
+<td align="left">云机房集群，跨越多机房部署；对注册中心服务可用性要求较高</td>
+</tr>
+</tbody></table>
+<p>  <strong>转载至： <a href="https://www.infoq.cn/article/jlDJQ*3wtN2PcqTDyokh" target="_blank" rel="noopener">https://www.infoq.cn/article/jlDJQ*3wtN2PcqTDyokh</a></strong> </p>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2019/12/17/eureka%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Eureka-%E6%9E%B6%E6%9E%84%E6%B7%B1%E5%85%A5%E8%A7%A3%E8%AF%BB/" rel="tag">Eureka 架构深入解读</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2019/12/24/CountDownLatch%E6%BA%90%E7%A0%81%E3%80%81%E9%94%81%E7%9A%84%E9%87%8A%E6%94%BE%E7%BB%86%E8%8A%82%E8%A7%A3%E6%9E%90/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            CountDownLatch源码、锁的释放细节解析
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/11/28/AQS%E5%88%86%E6%9E%90/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">AQS分析</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "SctsT8yefP0D7VSA3skojjQJ-gzGzoHsz",
+    app_key: "m5U9PA8tUiK3NJFScBqsQ8pg",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2019-2020
+        <i class="ri-heart-fill heart_icon"></i> 张朝阳
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src=''></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/avatar.jpg" alt="奋斗的光"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechatpay.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Subtitle -->
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="86"
+        src="//music.163.com/outchain/player?type=2&id=26060065&auto=1&height=66"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

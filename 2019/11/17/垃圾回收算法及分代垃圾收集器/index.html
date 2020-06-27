@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="好记性不如烂笔头" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    垃圾回收算法及分代垃圾收集器 |  奋斗的光
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/images/avatar.jpg" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-垃圾回收算法及分代垃圾收集器"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  垃圾回收算法及分代垃圾收集器
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2019/11/17/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%E5%8F%8A%E5%88%86%E4%BB%A3%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/" class="article-date">
+  <time datetime="2019-11-17T15:30:58.000Z" itemprop="datePublished">2019-11-17</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JVM/">JVM</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3.1k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">11 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="JVM-–-垃圾回收算法及分代垃圾收集器"><a href="#JVM-–-垃圾回收算法及分代垃圾收集器" class="headerlink" title="JVM – 垃圾回收算法及分代垃圾收集器"></a>JVM – 垃圾回收算法及分代垃圾收集器</h2><h4 id="JDK版本使用的默认收集器"><a href="#JDK版本使用的默认收集器" class="headerlink" title="JDK版本使用的默认收集器"></a><strong>JDK版本使用的默认收集器</strong></h4><p>​    jdk1.7 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）</p>
+<p>​    jdk1.8 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）</p>
+<p>​    jdk1.9 默认垃圾收集器G1</p>
+<h4 id="1、次收集器-Scavenge-GC"><a href="#1、次收集器-Scavenge-GC" class="headerlink" title="1、次收集器 Scavenge GC"></a>1、次收集器 Scavenge GC</h4><p>​    指发生在新生代的 GC，因为新生代的 Java 对象大多都是朝生夕死，所以Scavenge GC 非常频繁，一般回收速度也比较快。当 Eden 空间不足以为对象分配内存时，会触发 Scavenge GC。一般情况下，当新对象生成，并且在 Eden 申请空间失败时，就会触发 Scavenge GC，对 Eden 区域进行 GC，清除非存活对象，并且把尚且存活的对象移动到 Survivor 区。然后整理Survivor 的两个区。这种方式的 GC 是对年轻代的 Eden 区进行，不会影响到年老代。因为大部分对象都是从 Eden 区开始的，同时 Eden 区不会分配的很大，所以 Eden 区的 GC 会频繁进行。因而，一般在这里需要使用速度快、效率高的算法，使 Eden 去能尽快空闲出来。当年轻代堆空间紧张时会被触发相对于全收集而言，收集间隔较短</p>
+<h4 id="2、全收集器-Full-GC"><a href="#2、全收集器-Full-GC" class="headerlink" title="2、全收集器 Full GC"></a>2、全收集器 Full GC</h4><p>​    指发生在老年代的 GC，出现了 Full GC 一般会伴随着至少一次的 Minor GC（老年代的对象大部分是 Scavenge GC 过程中从新生代进入老年代），比如：分配担保失败。 FullGC 的速度一般会比 Scavenge GC 慢 10 倍以上。当老年代内存不足或者显式调用 System.gc()方法时，会触发 Full GC。当老年代或者持久代堆空间满了，会触发全收集操作可以使用 System.gc()方法来显式的启动全收集全收集一般根据堆大小的不同，需要的时间不尽相同，但一般会比较长。</p>
+<p>  3、分代垃圾回收器种类的常规匹配</p>
+<p>  <img src="https://oscimg.oschina.net/oscnet/aed3123900d213bd5affd4a5087eada4445.jpg" alt="img"></p>
+<h4 id="4、分代垃圾收集器-（对上面第三点的一一讲解）"><a href="#4、分代垃圾收集器-（对上面第三点的一一讲解）" class="headerlink" title="4、分代垃圾收集器 （对上面第三点的一一讲解）"></a>4、分代垃圾收集器 （对上面第三点的一一讲解）</h4><h5 id="4-1、串行收集器（Serial）"><a href="#4-1、串行收集器（Serial）" class="headerlink" title="4.1、串行收集器（Serial）"></a>4.1、串行收集器（Serial）</h5><p>​      Serial 收集器是 Hotspot 运行在 Client 模式下的默认新生代收集器, 它的特点是： 只用一个 CPU（计算核心）/一条收集线程去完成 GC 工作，且在进行垃圾收集时必须暂停其他所有的工作线程(“Stop The World” -后面简称 STW)。可以使用-XX:+UseSerialGC 打开。<br>​      虽然是单线程收集，但它却简单而高效，在 VM 管理内存不大的情况下(收集几十 M<del>一两百 M 的新生代)，停顿时间完全可以控制在几十毫秒</del>一百多毫秒内。</p>
+<p><img src="https://oscimg.oschina.net/oscnet/0aeaf57c1af1ba680499aedaf342797c6ed.jpg" alt="img"></p>
+<p>​    </p>
+<h5 id="4-2、并行收集器（ParNew）"><a href="#4-2、并行收集器（ParNew）" class="headerlink" title="4.2、并行收集器（ParNew）"></a>4.2、并行收集器（ParNew）</h5><p>​        ParNew 收集器其实是前面 Serial 的多线程版本, 除使用多条线程进行 GC 外, 包括 Serial可用的所有控制参数、收集算法、 STW、对象分配规则、回收策略等都与 Serial 完全一样(也是 VM 启用 CMS 收集器-XX: +UseConcMarkSweepGC 的默认新生代收集器)。由于存在线程切换的开销，ParNew 在单 CPU 的环境中比不上 Serial，且在通过超线程技术实现的两个 CPU 的环境中也不能 100%保证能超越 Serial. 但随着可用的 CPU 数量的增加，收集效率肯定也会大大增加(ParNew 收集线程数与 CPU 的数量相同, 因此在 CPU 数量过大的<br>环境中，可用-XX:ParallelGCThreads=<N>参数控制 GC 线程数)。</p>
+<p><img src="https://oscimg.oschina.net/oscnet/d6b70e0ac14c5c26578765f06b1d742a71c.jpg" alt="img"></p>
+<h5 id="4-3、Parallel-Scavenge-收集器"><a href="#4-3、Parallel-Scavenge-收集器" class="headerlink" title="4.3、Parallel Scavenge 收集器"></a>4.3、Parallel Scavenge 收集器</h5><p>​        与 ParNew 类似，Parallel Scavenge 也是使用复制算法, 也是并行多线程收集器。但与其他收集器关注尽可能缩短垃圾收集时间不同，Parallel Scavenge 更关注系统吞吐量：系统吞吐量=运行用户代码时间/(运行用户代码时间+垃圾收集时间)停顿时间越短就越适用于用户交互的程序 - 良好的响应速度能提升用户的体验；而高吞吐量则适用于后台运算而不需要太多交互的任务 - 可以最高效率地利用CPU时间,尽快地完成程序的运算任务。Parallel Scavenge 提供了如下参数设置系统吞吐量。</p>
+<p><img src="https://oscimg.oschina.net/oscnet/c5864f0a66a499ac4a8fc6dde912c99cca0.jpg" alt="img"></p>
+<p>​      </p>
+<h5 id="4-4、Serial-Old-收集器"><a href="#4-4、Serial-Old-收集器" class="headerlink" title="4.4、Serial Old 收集器"></a>4.4、Serial Old 收集器</h5><p>​        Serial Old 是 Serial 收集器的老年代版本, 同样是单线程收集器,使用“标记-整理”算法<br>​        <img src="https://oscimg.oschina.net/oscnet/cbf3ebdca5f9f18be72ec0d99d0b04c80a9.jpg" alt="img"></p>
+<h5 id="4-5、Parallel-Old-收集器"><a href="#4-5、Parallel-Old-收集器" class="headerlink" title="4.5、Parallel Old 收集器"></a>4.5、Parallel Old 收集器</h5><p>​        Parallel Old 是 Parallel Scavenge 收集器的老年代版本，使用多线程和“标记－整理”算法，吞吐量优先，主要与 Parallel Scavenge 配合在注重吞吐量及 CPU 资源敏感系统内使用；</p>
+<p><img src="https://oscimg.oschina.net/oscnet/dae61a8067cc7172e9890466dfcb9894b18.jpg" alt="img"></p>
+<p>​        </p>
+<h5 id="4-6、CMS-收集器（Concurrent-Mark-Sweep）"><a href="#4-6、CMS-收集器（Concurrent-Mark-Sweep）" class="headerlink" title="4.6、CMS 收集器（Concurrent Mark Sweep）"></a>4.6、CMS 收集器（Concurrent Mark Sweep）</h5><p>​        CMS(Concurrent Mark Sweep)收集器是一款具有划时代意义的收集器，一款真正意义上的并发收集器，虽然现在已经有了理论意义上表现更好的 G1 收集器，但现在主流互联网企业线上选用的仍是 CMS(如 Taobao、微店)。CMS是一种以获取最短回收停顿时间为目标的收集器(CMS又称多并发低暂停的收集器)，基于”标记-清除”算法实现, 整个 GC 过程分为以下 4 个步骤：<br>​        \1. 初始标记(CMS initial mark)<br>​        \2. 并发标记(CMS concurrent mark：GC Roots Tracing 过程)<br>​        \3. 重新标记(CMS remark)<br>​        \4. 并发清除(CMS concurrent sweep：已死对象将会就地释放，注意：此处没有压缩)<br>其中 1， 3 两个步骤(初始标记、重新标记)仍需 STW。但初始标记仅只标记一下 GC Roots能直接关联到的对象，速度很快；而重新标记则是为了修正并发标记期间因用户程序继续运行而导致标记产生变动的那一部分对象的标记记录，虽然一般比初始标记阶段稍长，但要远小于并发标记时间。</p>
+<p><img src="https://oscimg.oschina.net/oscnet/f840a95c4deb3b1d61792e539a8eaab0106.jpg" alt="img"></p>
+<p>​        CMS 特点：<br>​          1、CMS 默认启动的回收线程数=(CPU 数目+3) / 4，当 CPU 数&gt;4 时，GC 线程一般占用不超过 25%的 CPU 资源，但是当 CPU 数&lt;=4 时，GC 线程可能就会过多的占用用户 CPU 资源，从而导致应用程序变慢，总吞吐量降低。<br>​          2、无法处理浮动垃圾, 可能出现 Promotion Failure、 Concurrent Mode Failure 而导致另一次 Full GC 的产生：浮动垃圾是指在 CMS 并发清理阶段用户线程运行而产生的新垃圾。由于在 GC 阶段用户线程还需运行，因此还需要预留足够的内存空间给用户线程使用，导致 CMS不 能 像 其 他收 集 器那 样 等到老年代几乎填满了再进行收集。因此 CMS 提 供 了 -XX:CMSInitiatingOccupancyFraction 参 数 来 设 置 GC 的 触 发 百 分 比 ( 以 及<br>-XX:+UseCMSInitiatingOccupancyOnly 来启用该触发百分比)，当老年代的使用空间超过该比例后 CMS 就会被触发(JDK 1.6 之后默认 92%)。但当 CMS 运行期间预留的内存无法满足程序需要，就会出现上述 Promotion Failure 等失败，这时 VM 将启动后备预案：临时启用 Serial Old 收集器来重新执行Full GC(CMS通常配合大内存使用，一旦大内存转入串行的Serial GC，那停顿的时间就是大家都不愿看到的了)。<br>​          3、最后，由于 CMS 采用”标记-清除”算法实现，可能会产生大量内存碎片。内存碎片过多可能会导致无法分配大对象而提前触发 Full GC。因此 CMS 提供了-XX:+UseCMSCompactAtFullCollection 开关参数，用于在 Full GC 后再执行一个碎片整理过程。但内存整理是无法并发的，内存碎片问题虽然没有了，但停顿时间也因此变长了，因此 CMS还提供了另外一个参数 -XX:CMSFullGCsBeforeCompaction 用于设置在执行 N 次不进行内存整理的 Full GC 后, 跟着来一次带整理的(默认为 0: 每次进入 Full GC 时都进行碎片整理)</p>
+<h5 id="4-7、分区收集-G1-收集器"><a href="#4-7、分区收集-G1-收集器" class="headerlink" title="4.7、分区收集- G1 收集器"></a>4.7、分区收集- G1 收集器</h5><p>​          G1(Garbage-First)是一款面向服务端应用的收集器，主要目标用于配备多颗 CPU 的服务器治理大内存。</p>
+<p>​          - G1 is planned as the long term replacement for the Concurrent Mark-Sweep Collector(CMS)。</p>
+<p>​          -XX:+UseG1GC 启用 G1 收集器。</p>
+<p>​          与其他基于分代的收集器不同，G1 将整个 Java 堆划分为多个大小相等的独立区域(Region)，虽然还保留有新生代和老年代的概念，但新生代和老年代不再是物理隔离的了，它们都是一部分 Region(不需要连续)的集合。如：</p>
+<p><img src="https://oscimg.oschina.net/oscnet/18b6750b404f9586887e3584f39ae4b8ae8.jpg" alt="img"></p>
+<p>​          每块区域既有可能属于 O 区、也有可能是 Y 区，因此不需要一次就对整个老年代/新生代回收。而是当线程并发寻找可回收的对象时，有些区块包含可回收的对象要比其他区块多很多。虽然在清理这些区块时 G1 仍然需要暂停应用线程，但可以用相对较少的时间优先回收垃圾较多的 Region。这种方式保证了 G1 可以在有限的时间内获取尽可能高的收集效率。</p>
+<p>​          G1的新生代收集跟ParNew类似：存活的对象被转移到一个/多个Survivor Regions。如果存活时间达到阀值，这部分对象就会被提升到老年代。</p>
+<p><img src="https://oscimg.oschina.net/oscnet/da949a20e87b36021a40c583c8dff39ab36.jpg" alt="img"></p>
+<p>​          G1 年轻代 GC 特点如下:<br>​            一整块堆内存被分为多个 Regions。<br>​            存活对象被拷贝到新的 Survivor 区或老年代。<br>​            年轻代内存由一组不连续的 heap 区组成, 这种方法使得可以动态调整各代区域尺寸。<br>​            Young GC 会有 STW 事件, 进行时所有应用程序线程都会被暂停。<br>​            多线程并发 GC。</p>
+<p>​          G1 老年代 GC 特点如下:<br>​            并发标记阶段<br>​              1 在与应用程序并发执行的过程中会计算活跃度信息。<br>​              2 这些活跃度信息标识出那些 regions 最适合在 STW 期间回收(which regions will be best to reclaim during an evacuation pause)。<br>​              3 不像 CMS 有清理阶段。<br>​            再次标记阶段<br>​              1 使用 Snapshot-at-the-Beginning(SATB)算法比 CMS 快得多。<br>​              2 空 region 直接被回收。<br>​            拷贝/清理阶段(Copying/Cleanup Phase)<br>​              1 年轻代与老年代同时回收。<br>​              2 老年代内存回收会基于他的活跃度信息。</p>
+<h3 id="5、常见垃圾回收算法"><a href="#5、常见垃圾回收算法" class="headerlink" title="5、常见垃圾回收算法"></a>5、常见垃圾回收算法</h3><h5 id="5-1、引用计数（Reference-Counting）"><a href="#5-1、引用计数（Reference-Counting）" class="headerlink" title="5.1、引用计数（Reference Counting）"></a>5.1、引用计数（Reference Counting）</h5><p>​        比较古老的回收算法。原理是此对象有一个引用，即增加一个计数，删除一个引用则减少一个计数。垃圾回收时，只用收集计数为 0 的对象。此算法最致命的是无法处理循环引用的问题。<br>​      </p>
+<h5 id="5-2、复制（Copying）"><a href="#5-2、复制（Copying）" class="headerlink" title="5.2、复制（Copying）"></a>5.2、复制（Copying）</h5><p>​        此算法把内存空间划为两个相等的区域，每次只使用其中一个区域。垃圾回收时，遍历当前使用区域，把正在使用中的对象复制到另外一个区域中。此算法每次只处理正在使用中的对象，因此复制成本比较小， 同时复制过去以后还能进行相应的内存整理，不会出现“碎片”问题。当然，此算法的缺点也是很明显的，就是需要两倍内存空间。 简图如下：<br><img src="https://oscimg.oschina.net/oscnet/87fa59bac168dc3c7d2744650267c7e4d71.jpg" alt="img"></p>
+<h5 id="5-3、标记-清除（Mark-Sweep）"><a href="#5-3、标记-清除（Mark-Sweep）" class="headerlink" title="5.3、标记-清除（Mark-Sweep）"></a>5.3、标记-清除（Mark-Sweep）</h5><p>​        此算法执行分两阶段。第一阶段从引用根节点开始标记所有被引用的对象，第二阶段遍历整个堆，把未标记的对象清除。此算法需要暂停整个应用，同时，会产生内存碎片。 简图如下：</p>
+<p><img src="https://oscimg.oschina.net/oscnet/ab2d8b48f48cd1dfbc8c2d4428a984239d7.jpg" alt="img"></p>
+<h5 id="5-4、标记-整理（Mark-Compact）"><a href="#5-4、标记-整理（Mark-Compact）" class="headerlink" title="5.4、标记-整理（Mark-Compact）"></a>5.4、标记-整理（Mark-Compact）</h5><p>​        此算法结合了“标记-清除”和“复制”两个算法的优点。也是分两阶段，第一阶段从根节点开始标记所有被引用对象，第二阶段遍历整个堆，把清除未标记对象并且把存活对象“压缩”到堆的其中一块，按顺序排放。此算法避免了“标记-清除”的碎片问题，同时也避免了“复制”算法的空间问题。 简图如下：</p>
+<p><img src="https://oscimg.oschina.net/oscnet/8205688585fd843b7cb8a7720f8ade2fd13.jpg" alt="img"></p>
+<p><strong>转载至:  <a href="https://www.liangzl.com/get-article-detail-150467.html" target="_blank" rel="noopener">https://www.liangzl.com/get-article-detail-150467.html</a></strong> </p>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2019/11/17/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%E5%8F%8A%E5%88%86%E4%BB%A3%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%92%8C%E7%AE%97%E6%B3%95/" rel="tag">垃圾收集器和算法</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            JVM内存管理机制
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">JAVA中的锁实现原理</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "SctsT8yefP0D7VSA3skojjQJ-gzGzoHsz",
+    app_key: "m5U9PA8tUiK3NJFScBqsQ8pg",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2019-2020
+        <i class="ri-heart-fill heart_icon"></i> 张朝阳
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src=''></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/avatar.jpg" alt="奋斗的光"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechatpay.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Subtitle -->
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="86"
+        src="//music.163.com/outchain/player?type=2&id=26060065&auto=1&height=66"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

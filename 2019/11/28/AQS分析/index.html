@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="好记性不如烂笔头" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    AQS分析 |  奋斗的光
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/images/avatar.jpg" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-AQS分析"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  AQS分析
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2019/11/28/AQS%E5%88%86%E6%9E%90/" class="article-date">
+  <time datetime="2019-11-27T16:30:58.000Z" itemprop="datePublished">2019-11-28</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JUC/">JUC</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">8 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="AQS简介"><a href="#AQS简介" class="headerlink" title="AQS简介"></a>AQS简介</h2><p>AQS是一个抽象类，不可以被实例化，它的设计之初就是为了让子类通过继承来实现多样的功能的。它内部提供了一个FIFO的等待队列，用于多个线程等待一个事件（锁）。它有一个重要的状态标志——state，该属性是一个int值，表示对象的当前状态（如0表示lock，1表示unlock）。AQS提供了三个protected final的方法来改变state的值，分别是：getState、setState(int)、compareAndSetState(int, int)。根据修饰符，它们是不可以被子类重写的，但可以在子类中进行调用，这也就意味着子类可以根据自己的逻辑来决定如何使用state值。</p>
+<p>AQS的子类应当被定义为内部类，作为内部的helper对象。事实上，这也是juc种锁的做法，如ReentrantLock，便是通过内部的Sync对象来继承AQS的。AQS中定义了一些未实现的方法（抛出UnsupportedOperationException异常）</p>
+<ul>
+<li>tryAcquire(int) 尝试获取state</li>
+<li>tryRelease(int) 尝试释放state</li>
+<li>tryAcquireShared(int) 共享的方式尝试获取</li>
+<li>tryReleaseShared(int) 共享的方式尝试释放</li>
+<li>isHeldExclusively() 判断当前是否为独占锁</li>
+</ul>
+<p>这些方法是子类需要实现的，可以选择实现其中的一部分。根据实现方式的不同，可以分为两种：独占锁和共享锁。其中JUC中锁的分类为:</p>
+<ul>
+<li>独占锁：ReentrantLock、ReentrantReadWriteLock.WriteLock</li>
+<li>共享锁：ReentrantReadWriteLock.ReadLock、CountDownLatch、CyclicBarrier、Semaphore</li>
+</ul>
+<p>其实现方式为：</p>
+<ul>
+<li>独占锁实现的是tryAcquire(int)、tryRelease(int)</li>
+<li>共享锁实现的是tryAcquireShared(int)、tryReleaseShared(int)</li>
+</ul>
+<p>AQS中还提供了一个内部类ConditionObject，它实现了Condition接口，可以用于await/signal。采用CLH队列的算法，唤醒当前线程的下一个节点对应的线程，而signalAll唤醒所有线程。</p>
+<p>总的来说，AQS提供了三个功能：</p>
+<ol>
+<li>实现独占锁</li>
+<li>实现共享锁</li>
+<li>实现Condition模型</li>
+</ol>
+<h1 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h1><h2 id="Node解析"><a href="#Node解析" class="headerlink" title="Node解析"></a>Node解析</h2><p>AQS内部定义了一个static final的内部类Node，用于实现等待队列CLH，满足FIFO结构，其队列结构如下所示：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmUMTZTcZUlSKMhluYaEMIXkdGObX77E6b9LSaePp5edTn8iaJibaS1k2A/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>队列为一个双向链表结构，保存了head、tail两个指针，分别指向链表头部、尾部。当需要添加节点时，直接在tail位置添加，而dequeue操作直接对head节点进行。Node中定义如下常量：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVm8icOicDxn8ZW8u5HXecboYqsedmsUsiaBPqPC5fvibNUcrvQdQaEHbOe9w/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>以上常量分别用于设置如下属性的值：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmOiaUbtibTT7H82qMu7LsQ08VXA4d2JhheZqUt4M7HHGUmViby8ol4umWw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>Node类型的常量SHARED、EXCLUSIVE用于设置nextWaiter，用于表示当前节点是共享的，还是互斥的，分别用于共享锁和独占锁。int类型的常量CANCELLED、SIGNAL、CONDITION、PROPAGATE用于设置waitStatus，用于在ConditionObject中使用，可以实现await/signal模型。</p>
+<p>Node有三个构造函数：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmLichjWjaqUsqQibxg1FC7psB37M7icic5ldFz9A1icDGYmxvdoaf0oR9lPw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<h2 id="AQS属性"><a href="#AQS属性" class="headerlink" title="AQS属性"></a>AQS属性</h2><p>AQS使用内部类Node，构造一个双向链表，用作FIFO队列；除此之外，AQS还存放一个int类型的属性state，用于表示当前的同步状态。</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmnGcSUovArCVmiaibah7j5ufzZyk4CMibdqrkAwRnq9XdWDa8T0EJEpb8w/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>head节点是一个哨兵节点，不存放实际的“线程”节点（使用Node的无参构造函数）。tail指向链表的最后一个节点，当新增节点时，将新节点作为当前tail的下一个节点，通过CAS设置成功后,将新节点设为新的tail节点即可。新增节点的源码如下：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmbAKfDcKYyyibibq9YTq5beiaFgXTt0nkJR8QwkTmWzpoUzkJZpf7WH7bQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>enq操作是一个无限循环的操作，最终总会成功，但根据代码可知，AQS应不是starvation free的，因为某个线程可能会持续的enq失败。AQS提供了形如doAcquireNanos方法，但其超时返回false操作是在addWaiter方法(内部调用enq)之后，也无法回避enq的starvation。在此顺便说一下，AQS也是无法保证fair的，也就是说先入队列的线程不一定先获取到锁。节点的CAS是通过Unsafe来实现的，在state中统一说明。</p>
+<p>state表示AQS当前的同步状态，如0表示lock，1表示unlock状态。对state的操作，提供了三个方法。</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmx5XfLsNO7J6JfO3sMeSDcibA9jDLrlHfRgRq1BI0wk9wSxF93yx62DQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>可以看到compareAndSetState使用的是unsafe对象的compareAndSwapInt方法，传入this指针，state属性的偏移地址，期待值expect，更新值update，可以实现CAS操作。state属性的偏移地址获取方式如下：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmcFr9MEUvwMkEZgJFv3hSDI4hia3sicib8tFfBiaRRZOagyHPXVQg7ZAhKA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>实际上，AQS的head、tail节点，内部类Node的waitStatus、next属性均使用unsafe对象，通过偏移地址来进行CAS操作。Unsafe是sun.misc包下的类，在Java API中没有官方文档，因为它是用于实现Java库的，Java中有一个功能类似的类，可以实现对象属性的CAS操作。</p>
+<p>AQS还有一个属性<code>static final long spinForTimeoutThreshold = 1000L;</code>，用于表示自旋的时间，小于1000纳秒的采用自旋锁，大于1000纳秒，使用LockSupport.park方法，将线程挂起。</p>
+<h2 id="重要方法分析"><a href="#重要方法分析" class="headerlink" title="重要方法分析"></a>重要方法分析</h2><p>AQS是用于实现独占锁或共享锁的，对于一个锁来说，最重要的就是lock和unlock操作了，对应到AQS中，为acquire、release方法，由于AQS需要和子类进行“<strong>合作</strong>”，lock方法调用内部类的acquire方法，也就是AQS的acquire方法。unlock方法调用release方法。<br>下面对两个流程进行分析</p>
+<h3 id="acquire"><a href="#acquire" class="headerlink" title="acquire"></a>acquire</h3><p>acquire是独占锁的获取锁的方法，其源码如下：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmKMMh8DQvCaUT7ia2QAM7gAMNhBZ6iaJ2b7u801X2fnkvF8pn6UnKlvKg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>acquire方法非常简单，如果tryAcquire失败（返回false），则调用acquireQueued方法，将当前线程加入到等待队列中，并中断当前线程，等待唤醒。</p>
+<p>tryAcquire由子类实现，下面先分析acquireQueued方法。</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmgo87Ejb9XgdyZ832OJxQawU50X8nMqem8BOdTKDCH4PTyjaoMdc7OQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>acquireQueued在addWaiter之后，再次尝试获取锁，与tryAcquire不同的是，返回值代表的是当前线程在等待时是否可中断，通过返回interrupted，true表示可中断，false表示不可中断。通过判断当前节点是否为队列第一个节点，来决定是否获取成功，acquireQueued方法相当于提供了一个默认方法，会被子类的tryAcquire方法屏蔽掉（若tryAcquire返回true的话）。acquireQueued使用了死循环来判断当前节点前一节点是否为head，是，则获取到锁。但这个方法真的是死循环吗？其实不是的，trick就在shouldParkAfterFailedAcquire方法中，其源码如下：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmjy4kFicrDowl7beYGDAXwUcz3aKmzu075417Pbx4MNtwDM43YsiaYCgA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>由于在锁的使用情景内，Node的waitStatus初始必定是0，因此获取锁的时候shouldParkAfterFailedAcquire方法首次进入，前一节点的waitStatus必定为0，执行compareAndSet将其设置为Node.SIGNAL(-1),再次调用shouldParkAfterFailedAcquire时，必定返回true。因此acquireQueued方法并不是死循环，而是在调用两次shouldParkAfterFailedAcquire方法之后（第一次将waitStatus设为-1，第二次返回true），执行了parkAndCheckInterrupt方法，挂起了当前线程。parkAndCheckInterrupt内调用了LockSupport.park(this)，查阅API可知，park方法挂起当前线程，并在以下三种情况下立即返回。</p>
+<ul>
+<li>其他线程调用unpark，唤醒了当前线程</li>
+<li>其他线程调用了interrupt，中断了当前线程</li>
+<li>方法虚假返回（for no reason）</li>
+</ul>
+<p>在AQS中，常见的为调用unpark(其他线程执行release释放锁时)唤醒了当前线程。当前线程唤醒之后，继续调用acquireQueue中的for循环，判断是否可以获取锁。</p>
+<p>tryAcquire会调用子类Mutex.Sync的实现，其代码如下：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmsRV0Vic04wicmTicKNLgnBuNsFrSdKqw8P1geeDV3Iaia9xWKBliaDaLRlA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>由此可见,AQS提供了一个模板，子类需要实现其tryAcquire方法，实现具体的获取锁逻辑（通过对state的读、写），子类lock方法直接调用AQS的acquire方法即可。</p>
+<h3 id="release方法"><a href="#release方法" class="headerlink" title="release方法"></a>release方法</h3><p>Mutex的unlock方法调用了release方法，在AQS中定义，源码如下：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmQnbKoOhlrRPEtjEXdIUph5G6tLp0UCtfW5dypSc6AWJpNcm2RjkdKw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>还是同样的配方，release方法调用子类实现的tryRelease，返回true后，表示获取成功，之后判断头节点，由于锁的实现中，waitStatus必定为0或者-1，而当一个线程lock成功后，waitStatus必定为-1，所以执行unparkSuccessor方法，该方法首先将head节点的waitStatus设为0，之后判断head下一节点是否为空，若不为空且waitStatus不大于0（大于0表示线程被取消），则调用LockSupport.unpark唤醒下一节点对应的线程；若为空或线程被取消，从tail节点开始遍历队列，找到队列中距离head节点最近的、未被cancel（waitStatus小于0）的节点，调用LockSupport.unpark唤醒它。源码如下：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmBu3bYHMYPvCq8LtqRicLXfyR4hibrMSd2bibhVduc0o1kwdQ3B1za5H8Q/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>这里简单介绍一下为什么循环是从tail往前遍历，这是因为CAS操作无法对双向链表进行原子插入，在enq中，具体的插入是，先将新节点指向tail，然后CAS将tail设为新节点，因此对于pred指针的设置时原子性的，可以保证从tail向前遍历可以找到所有的节点。而next指针只是一种优化路径，方便查找，并不能保证next为null，则该节点为队列的最后一个节点。</p>
+<p>tryRelease方法的源码如下：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/IFwL3rx8A3cHVWbj7SAZOkNPiaKT1SWVmETs7ChNaRaPsHCGibLGJia7O1gQX3rrwbFw7eBdCiaCSNnKmOPicbweBZw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>由源码可知，tryRelease只需要将state设置为0即可，因为调用unlock方法的必定是之前调用lock成功的，因此当前state必定为1，为安全起见，使用getState判断是否为0，若为0，说明线程出错。state设置时，不需要调用CAS方法，只需要setState即可，保证write对于其他线程可见即可（通过volatile内存屏障保证）。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>AQS提供了一个框架，在其上可以构建丰富的线程同步工具类，JUC包中ReadWriteLock、CountDownLatch都是基于AQS实现的，AQS在JUC包中的地位相当重要。</p>
+<p>AQS提供了三大功能：独占锁、共享锁、ConditionObject。子类在实现中，可以实现其一部分方法。其编程思想值得借鉴，通过超类实现基本的处理流程，将其中部分抽成未实现方法，默认抛出异常，由子类实现，这种解耦方式，最大化的减少了代码的重复，且便于子类在实现中个性化自己的处理逻辑。</p>
+<p><strong>转载至： <a href="https://blog.csdn.net/GV7lZB0y87u7C/article/details/92260574" target="_blank" rel="noopener">https://blog.csdn.net/GV7lZB0y87u7C/article/details/92260574</a></strong> </p>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2019/11/28/AQS%E5%88%86%E6%9E%90/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AQS/" rel="tag">AQS</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2019/12/17/eureka%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            eureka架构解读
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">JVM内存管理机制</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "SctsT8yefP0D7VSA3skojjQJ-gzGzoHsz",
+    app_key: "m5U9PA8tUiK3NJFScBqsQ8pg",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2019-2020
+        <i class="ri-heart-fill heart_icon"></i> 张朝阳
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src=''></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/avatar.jpg" alt="奋斗的光"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechatpay.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Subtitle -->
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="86"
+        src="//music.163.com/outchain/player?type=2&id=26060065&auto=1&height=66"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>
