@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>奋斗的皮皮虾</title>
+  
+  <subtitle>业精于勤荒于嬉,行成于思毁于随。</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2020-02-10T05:37:59.319Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>张朝阳</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CountDownLatch源码、锁的释放细节解析</title>
+    <link href="http://yoursite.com/2019/12/24/CountDownLatch%E6%BA%90%E7%A0%81%E3%80%81%E9%94%81%E7%9A%84%E9%87%8A%E6%94%BE%E7%BB%86%E8%8A%82%E8%A7%A3%E6%9E%90/"/>
+    <id>http://yoursite.com/2019/12/24/CountDownLatch%E6%BA%90%E7%A0%81%E3%80%81%E9%94%81%E7%9A%84%E9%87%8A%E6%94%BE%E7%BB%86%E8%8A%82%E8%A7%A3%E6%9E%90/</id>
+    <published>2019-12-23T17:35:58.000Z</published>
+    <updated>2020-02-10T05:37:59.319Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;CountDownLatch源码、锁的释放细节解析&quot;&gt;&lt;a href=&quot;#CountDownLatch源码、锁的释放细节解析&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="JUC" scheme="http://yoursite.com/categories/JUC/"/>
+    
+    
+      <category term="CountDownLatch" scheme="http://yoursite.com/tags/CountDownLatch/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>eureka架构解读</title>
+    <link href="http://yoursite.com/2019/12/17/eureka%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/"/>
+    <id>http://yoursite.com/2019/12/17/eureka%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/</id>
+    <published>2019-12-16T16:31:16.000Z</published>
+    <updated>2020-03-09T05:23:56.991Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;微服务注册中心-Eureka-架构深入解读&quot;&gt;&lt;a href=&quot;#微服务注册中心-Eureka-架构深入解读&quot; class=&quot;headerlink&quot; title=&quot;微服务注册中心 Eureka 架构深入解读&quot;&gt;&lt;/a&gt;微服务注册中心 Eureka
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Eureka" scheme="http://yoursite.com/categories/Eureka/"/>
+    
+    
+      <category term="Eureka 架构深入解读" scheme="http://yoursite.com/tags/Eureka-%E6%9E%B6%E6%9E%84%E6%B7%B1%E5%85%A5%E8%A7%A3%E8%AF%BB/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>AQS分析</title>
+    <link href="http://yoursite.com/2019/11/28/AQS%E5%88%86%E6%9E%90/"/>
+    <id>http://yoursite.com/2019/11/28/AQS%E5%88%86%E6%9E%90/</id>
+    <published>2019-11-27T16:30:58.000Z</published>
+    <updated>2020-06-27T08:53:36.584Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;AQS简介&quot;&gt;&lt;a href=&quot;#AQS简介&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="JUC" scheme="http://yoursite.com/categories/JUC/"/>
+    
+    
+      <category term="AQS" scheme="http://yoursite.com/tags/AQS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JVM内存管理机制</title>
+    <link href="http://yoursite.com/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/"/>
+    <id>http://yoursite.com/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/</id>
+    <published>2019-11-17T15:30:58.000Z</published>
+    <updated>2019-11-20T14:57:07.362Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;JVM内存管理机制&quot;&gt;&lt;a href=&quot;#JVM内存管理机制&quot; class=&quot;headerlink&quot; title=&quot;JVM内存管理机制&quot;&gt;&lt;/a&gt;JVM内存管理机制&lt;/h2&gt;&lt;h3 id=&quot;一、概述&quot;&gt;&lt;a href=&quot;#一、概述&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="JVM" scheme="http://yoursite.com/categories/JVM/"/>
+    
+    
+      <category term="JVM内存管理" scheme="http://yoursite.com/tags/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>垃圾回收算法及分代垃圾收集器</title>
+    <link href="http://yoursite.com/2019/11/17/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%E5%8F%8A%E5%88%86%E4%BB%A3%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/"/>
+    <id>http://yoursite.com/2019/11/17/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%E5%8F%8A%E5%88%86%E4%BB%A3%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</id>
+    <published>2019-11-17T15:30:58.000Z</published>
+    <updated>2020-01-08T15:16:27.098Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;JVM-–-垃圾回收算法及分代垃圾收集器&quot;&gt;&lt;a href=&quot;#JVM-–-垃圾回收算法及分代垃圾收集器&quot; class=&quot;headerlink&quot; title=&quot;JVM – 垃圾回收算法及分代垃圾收集器&quot;&gt;&lt;/a&gt;JVM –
+        
+      
+    
+    </summary>
+    
+    
+      <category term="JVM" scheme="http://yoursite.com/categories/JVM/"/>
+    
+    
+      <category term="垃圾收集器和算法" scheme="http://yoursite.com/tags/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%92%8C%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JAVA中的锁实现原理</title>
+    <link href="http://yoursite.com/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
+    <id>http://yoursite.com/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</id>
+    <published>2019-11-15T15:30:58.000Z</published>
+    <updated>2019-11-25T16:10:33.247Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;JAVA中的锁实现原理&quot;&gt;&lt;a href=&quot;#JAVA中的锁实现原理&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Java基础原理" scheme="http://yoursite.com/categories/Java%E5%9F%BA%E7%A1%80%E5%8E%9F%E7%90%86/"/>
+    
+    
+      <category term="sync锁实现原理" scheme="http://yoursite.com/tags/sync%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Zookeeper的ZAB协议</title>
+    <link href="http://yoursite.com/2019/11/05/Zookeeper%E7%9A%84ZAB%E5%8D%8F%E8%AE%AE/"/>
+    <id>http://yoursite.com/2019/11/05/Zookeeper%E7%9A%84ZAB%E5%8D%8F%E8%AE%AE/</id>
+    <published>2019-11-05T12:12:58.000Z</published>
+    <updated>2019-11-12T15:23:03.325Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Zookeeper的ZAB协议&quot;&gt;&lt;a href=&quot;#Zookeeper的ZAB协议&quot; class=&quot;headerlink&quot; title=&quot;Zookeeper的ZAB协议&quot;&gt;&lt;/a&gt;Zookeeper的ZAB协议&lt;/h2&gt;&lt;h3
+        
+      
+    
+    </summary>
+    
+    
+      <category term="zookeeper相关" scheme="http://yoursite.com/categories/zookeeper%E7%9B%B8%E5%85%B3/"/>
+    
+    
+      <category term="zookeeper" scheme="http://yoursite.com/tags/zookeeper/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>深入理解Java内存模型</title>
+    <link href="http://yoursite.com/2019/11/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
+    <id>http://yoursite.com/2019/11/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</id>
+    <published>2019-11-05T12:12:58.000Z</published>
+    <updated>2019-11-11T13:58:35.483Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;深入理解Java内存模型&quot;&gt;&lt;a href=&quot;#深入理解Java内存模型&quot; class=&quot;headerlink&quot; title=&quot;深入理解Java内存模型&quot;&gt;&lt;/a&gt;深入理解Java内存模型&lt;/h1&gt;&lt;p&gt;java内存模型(Java Memory
+        
+      
+    
+    </summary>
+    
+    
+      <category term="JVM" scheme="http://yoursite.com/categories/JVM/"/>
+    
+    
+      <category term="JVM" scheme="http://yoursite.com/tags/JVM/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>循环依赖</title>
+    <link href="http://yoursite.com/2019/10/28/Spring%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/"/>
+    <id>http://yoursite.com/2019/10/28/Spring%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/</id>
+    <published>2019-10-28T12:10:11.000Z</published>
+    <updated>2019-12-22T08:31:14.071Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;Spring-IOC-容器源码分析-循环依赖&quot;&gt;&lt;a href=&quot;#Spring-IOC-容器源码分析-循环依赖&quot; class=&quot;headerlink&quot; title=&quot;Spring IOC 容器源码分析 - 循环依赖&quot;&gt;&lt;/a&gt;Spring IOC 容器源码分析
+        
+      
+    
+    </summary>
+    
+    
+      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+    
+    
+      <category term="spring循环依赖" scheme="http://yoursite.com/tags/spring%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Spring IOC 学习分享</title>
+    <link href="http://yoursite.com/2019/10/16/SpringIocLearn/"/>
+    <id>http://yoursite.com/2019/10/16/SpringIocLearn/</id>
+    <published>2019-10-16T15:10:11.000Z</published>
+    <updated>2020-01-08T15:24:08.056Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;Spring-IOC学习分享&quot;&gt;&lt;a href=&quot;#Spring-IOC学习分享&quot; class=&quot;headerlink&quot; title=&quot;Spring IOC学习分享&quot;&gt;&lt;/a&gt;Spring IOC学习分享&lt;/h1&gt;&lt;h4 id=&quot;引言&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+    
+    
+      <category term="ioc容器" scheme="http://yoursite.com/tags/ioc%E5%AE%B9%E5%99%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>浅谈ConcurrentHashMap</title>
+    <link href="http://yoursite.com/2019/09/29/%E6%B5%85%E8%B0%88ConcurrentHashMap/"/>
+    <id>http://yoursite.com/2019/09/29/%E6%B5%85%E8%B0%88ConcurrentHashMap/</id>
+    <published>2019-09-28T16:16:03.000Z</published>
+    <updated>2020-01-08T15:17:05.012Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;本人使用的是jdk1.8&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1
+        
+      
+    
+    </summary>
+    
+    
+      <category term="JAVA集合" scheme="http://yoursite.com/categories/JAVA%E9%9B%86%E5%90%88/"/>
+    
+    
+      <category term="ConcurrentHashMap" scheme="http://yoursite.com/tags/ConcurrentHashMap/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>缓存、降级（熔断）和限流</title>
+    <link href="http://yoursite.com/2019/09/28/%E7%BC%93%E5%AD%98%E3%80%81%E9%99%8D%E7%BA%A7%EF%BC%88%E7%86%94%E6%96%AD%EF%BC%89%E5%92%8C%E9%99%90%E6%B5%81/"/>
+    <id>http://yoursite.com/2019/09/28/%E7%BC%93%E5%AD%98%E3%80%81%E9%99%8D%E7%BA%A7%EF%BC%88%E7%86%94%E6%96%AD%EF%BC%89%E5%92%8C%E9%99%90%E6%B5%81/</id>
+    <published>2019-09-28T12:10:10.000Z</published>
+    <updated>2019-12-30T14:28:28.751Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;高并发系统三大利器：缓存、降级（熔断）和限流。&quot;&gt;&lt;a href=&quot;#高并发系统三大利器：缓存、降级（熔断）和限流。&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="服务限流策略" scheme="http://yoursite.com/categories/%E6%9C%8D%E5%8A%A1%E9%99%90%E6%B5%81%E7%AD%96%E7%95%A5/"/>
+    
+    
+      <category term="服务限流策略" scheme="http://yoursite.com/tags/%E6%9C%8D%E5%8A%A1%E9%99%90%E6%B5%81%E7%AD%96%E7%95%A5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Mysql面试题</title>
+    <link href="http://yoursite.com/2019/04/09/Mysql%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
+    <id>http://yoursite.com/2019/04/09/Mysql%E9%9D%A2%E8%AF%95%E9%A2%98/</id>
+    <published>2019-04-09T14:15:10.000Z</published>
+    <updated>2019-12-21T07:06:00.463Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Mysql面试题&quot;&gt;&lt;a href=&quot;#Mysql面试题&quot; class=&quot;headerlink&quot; title=&quot;Mysql面试题&quot;&gt;&lt;/a&gt;Mysql面试题&lt;/h2&gt;&lt;h2 id=&quot;一、基本概念&quot;&gt;&lt;a href=&quot;#一、基本概念&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="面试题" scheme="http://yoursite.com/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
+    
+    
+      <category term="mysql" scheme="http://yoursite.com/tags/mysql/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>SpringMvc一个请求的旅行过程</title>
+    <link href="http://yoursite.com/2018/12/18/%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%9A%84%E6%97%85%E8%A1%8C%E8%BF%87%E7%A8%8B/"/>
+    <id>http://yoursite.com/2018/12/18/%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%9A%84%E6%97%85%E8%A1%8C%E8%BF%87%E7%A8%8B/</id>
+    <published>2018-12-18T15:26:42.000Z</published>
+    <updated>2019-12-22T08:01:41.559Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;Spring-MVC-原理探秘-一个请求的旅行过程&quot;&gt;&lt;a href=&quot;#Spring-MVC-原理探秘-一个请求的旅行过程&quot; class=&quot;headerlink&quot; title=&quot;Spring MVC 原理探秘 - 一个请求的旅行过程**&quot;&gt;&lt;/a&gt;Spring
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Spring MVC 原理探秘" scheme="http://yoursite.com/categories/Spring-MVC-%E5%8E%9F%E7%90%86%E6%8E%A2%E7%A7%98/"/>
+    
+    
+      <category term="一个请求的旅行过程" scheme="http://yoursite.com/tags/%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%9A%84%E6%97%85%E8%A1%8C%E8%BF%87%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>SQL 的执行过程</title>
+    <link href="http://yoursite.com/2018/11/19/mybatis-SQL%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/"/>
+    <id>http://yoursite.com/2018/11/19/mybatis-SQL%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/</id>
+    <published>2018-11-18T16:15:05.000Z</published>
+    <updated>2019-12-21T07:04:14.755Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;MyBatis-源码分析-SQL-的执行过程&quot;&gt;&lt;a href=&quot;#MyBatis-源码分析-SQL-的执行过程&quot; class=&quot;headerlink&quot; title=&quot;MyBatis 源码分析 - SQL 的执行过程&quot;&gt;&lt;/a&gt;MyBatis 源码分析 -
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Mybatis" scheme="http://yoursite.com/categories/Mybatis/"/>
+    
+    
+      <category term="SQL 的执行过程" scheme="http://yoursite.com/tags/SQL-%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Configuration解析</title>
+    <link href="http://yoursite.com/2018/11/15/mybatis-configuration%E8%A7%A3%E6%9E%90/"/>
+    <id>http://yoursite.com/2018/11/15/mybatis-configuration%E8%A7%A3%E6%9E%90/</id>
+    <published>2018-11-15T15:46:19.000Z</published>
+    <updated>2019-12-21T07:04:49.397Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;Mybatis-Configuration解析&quot;&gt;&lt;a href=&quot;#Mybatis-Configuration解析&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Mybatis" scheme="http://yoursite.com/categories/Mybatis/"/>
+    
+    
+      <category term="configuration" scheme="http://yoursite.com/tags/configuration/"/>
+    
+  </entry>
+  
+</feed>
