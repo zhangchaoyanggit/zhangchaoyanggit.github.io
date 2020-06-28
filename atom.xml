@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://chaoyang66.gitee.io/"/>
-  <updated>2020-06-27T12:14:59.063Z</updated>
+  <updated>2020-06-28T07:14:19.407Z</updated>
   <id>https://chaoyang66.gitee.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>docker 学习笔记</title>
+    <link href="https://chaoyang66.gitee.io/2020/04/17/docker%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    <id>https://chaoyang66.gitee.io/2020/04/17/docker%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
+    <published>2020-04-17T14:34:56.000Z</published>
+    <updated>2020-06-28T07:14:19.407Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;docker-学习笔记&quot;&gt;&lt;a href=&quot;#docker-学习笔记&quot; class=&quot;headerlink&quot; title=&quot;docker 学习笔记&quot;&gt;&lt;/a&gt;docker 学习笔记&lt;/h2&gt;&lt;h5 id=&quot;为什么不用虚拟机打包所有软件-生成镜像&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="docker &amp; k8s" scheme="https://chaoyang66.gitee.io/categories/docker-k8s/"/>
+    
+    
+      <category term="docker &amp; k8s" scheme="https://chaoyang66.gitee.io/tags/docker-k8s/"/>
+    
+  </entry>
   
   <entry>
     <title>为啥springboot打成jar可以直接启动？</title>
