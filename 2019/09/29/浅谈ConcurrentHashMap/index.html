@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">6.1k</span>
+            <span class="post-count">6.2k</span>
         </span>
     </span>
 
@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">25 分钟</span>
+            <span class="post-count">26 分钟</span>
         </span>
     </span>
 </div>
@@ -112,12 +112,42 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
-<p>本人使用的是jdk1.8</p>
-</blockquote>
+  <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><a href="#concurrenthashmap-17">ConcurrentHashMap 1.7</a></p>
+<p><a href="#concurrenthashmap-18">ConcurrentHashMap 1.8</a></p>
+<p><a href="#concurrenthashmap头注释信息">ConcurrentHashMap头注释信息</a></p>
+<p><a href="#concurrrenthashmap关键属性">ConcurrrentHashMap关键属性</a></p>
+<p><a href="#concurrenthashmap为何存在">ConcurrentHashMap为何存在</a></p>
+<p><a href="#cas算法">CAS算法</a></p>
+<ul>
+<li><ul>
+<li><a href="#什么是cas">什么是CAS</a></li>
+</ul>
+</li>
+</ul>
+<p><a href="#concurrenthashmap构造函数">ConcurrentHashMap构造函数</a></p>
+<p><a href="#concurrenthashmap-常见api解析">ConcurrentHashMap 常见Api解析</a></p>
+<ul>
+<li><a href="#inittable">initTable()</a></li>
+<li><a href="#putvalk-key-v-value-boolean-onlyifabsent">putVal(K key, V value, boolean onlyIfAbsent)</a></li>
+<li><a href="#getobject-key">get(Object key)</a></li>
+</ul>
+<p><a href="#concurrrenthashmap关键类">ConcurrrentHashMap关键类</a></p>
+<ul>
+<li><a href="#node内部类">Node内部类</a></li>
+<li><a href="#treenode-树节点">TreeNode 树节点</a></li>
+<li><a href="#treebin-树箱">TreeBin 树箱</a></li>
+<li><a href="#forwardingnode">ForwardingNode</a></li>
+</ul>
+<p><a href="#cas-关键操作">CAS 关键操作</a></p>
+<ul>
+<li><a href="#tabat">tabAt</a></li>
+<li><a href="#castabat">casTabAt</a></li>
+<li><a href="#compareandswapint">compareAndSwapInt</a></li>
+</ul>
+<p><a href="#总结">总结</a></p>
 <h1 id="ConcurrentHashMap-1-7"><a href="#ConcurrentHashMap-1-7" class="headerlink" title="ConcurrentHashMap 1.7"></a>ConcurrentHashMap 1.7</h1><p>首先我们来回顾一下在jdk1.7当中ConcurrentHashMap是如何实现的。</p>
 <p>还在jdk1.7的时候ConcurrentHashMap的底层数据结构其实是由<code>Segment</code>数组和多个<code>HashEntry</code>组成。如图：</p>
-<p><img src="https:////upload-images.jianshu.io/upload_images/2111160-8f9aea82b9c71d62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/767/format/webp" alt="img"></p>
+<p><img src="E:%5Cblog%5Csource%5Cimages%5Chashmap1.8-01.png" alt="img"></p>
 <p>image</p>
 <p>Segment数组的意义就是将一个大的table分割成多个小的table来进行加锁，也就是上面的提到的锁分段技术，而每一个Segment元素存储的是HashEntry数组+链表，这个和HashMap的散列表+链表的数据存储结构是一样的。这里的每个table就像我们之前所说的HashTable一样。</p>
 <p>不同于HashTable为了并发情况下的安全性锁整个table那么暴力不同，ConcurrentHashMap的处理方式则是对其进行了优化，是把一个大table分割成小table来分别锁住。也就是我们常说的锁分段。</p>
