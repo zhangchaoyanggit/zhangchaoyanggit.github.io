@@ -44,6 +44,33 @@
   </entry>
   
   <entry>
+    <title>docker 学习笔记</title>
+    <link href="https://chaoyang66.gitee.io/2020/04/17/%E5%AE%89%E8%A3%85linux%20%E7%B3%BB%E7%BB%9F%20centos7%20%E6%89%8B%E8%AE%B0/"/>
+    <id>https://chaoyang66.gitee.io/2020/04/17/%E5%AE%89%E8%A3%85linux%20%E7%B3%BB%E7%BB%9F%20centos7%20%E6%89%8B%E8%AE%B0/</id>
+    <published>2020-04-17T14:34:56.000Z</published>
+    <updated>2020-07-01T13:41:23.889Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;docker-学习笔记&quot;&gt;&lt;a href=&quot;#docker-学习笔记&quot; class=&quot;headerlink&quot; title=&quot;docker 学习笔记&quot;&gt;&lt;/a&gt;docker 学习笔记&lt;/h2&gt;&lt;h5 id=&quot;为什么不用虚拟机打包所有软件-生成镜像&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="docker &amp; k8s" scheme="https://chaoyang66.gitee.io/categories/docker-k8s/"/>
+    
+    
+      <category term="docker &amp; k8s" scheme="https://chaoyang66.gitee.io/tags/docker-k8s/"/>
+    
+  </entry>
+  
+  <entry>
     <title>为啥springboot打成jar可以直接启动？</title>
     <link href="https://chaoyang66.gitee.io/2020/03/18/%E4%B8%BA%E5%95%A5springboot%E6%89%93%E6%88%90jar%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%90%AF%E5%8A%A8%EF%BC%9F/"/>
     <id>https://chaoyang66.gitee.io/2020/03/18/%E4%B8%BA%E5%95%A5springboot%E6%89%93%E6%88%90jar%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%90%AF%E5%8A%A8%EF%BC%9F/</id>
