@@ -112,7 +112,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="深入理解Mysql索引B-Tree"><a href="#深入理解Mysql索引B-Tree" class="headerlink" title="深入理解Mysql索引B+Tree"></a>深入理解Mysql索引B+Tree</h2><p>正确的创建合适的索引，是提升数据库查询性能的基础。在正式讲解之前，对后面举例中使用的表结构先简单看一下：</p>
+  <h2 id="深入理解Mysql索引B-Tree11"><a href="#深入理解Mysql索引B-Tree11" class="headerlink" title="深入理解Mysql索引B+Tree11"></a>深入理解Mysql索引B+Tree11</h2><p>正确的创建合适的索引，是提升数据库查询性能的基础。在正式讲解之前，对后面举例中使用的表结构先简单看一下：</p>
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(</span><br><span class="line">    id     bigint  not null comment &#39;id&#39; primary key,</span><br><span class="line">    name   varchar(200) null comment &#39;name&#39;,</span><br><span class="line">    age    bigint       null comment &#39;age&#39;,</span><br><span class="line">    gender int          null comment &#39;gender&#39;,</span><br><span class="line">    key (name)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
 <h3 id="1-索引是什么及工作机制？"><a href="#1-索引是什么及工作机制？" class="headerlink" title="1. 索引是什么及工作机制？"></a>1. 索引是什么及工作机制？</h3><p>索引是为了加速对表中数据行的检索而创建的一种分散存储的数据结构。其工作机制如下图：</p>
@@ -125,7 +125,7 @@
 <p><img src="../images/image-20200706215501638.png" alt="image-20200706215501638"></p>
 <p>如果我们要查询的数据为4，则需要遍历所有的节点才能找到4，即，相当于全表扫描，就是由于存在这种问题，所以二叉查找树不适合用于作为索引的数据结构。</p>
 <h4 id="2-2-平衡二叉树为什么不可行"><a href="#2-2-平衡二叉树为什么不可行" class="headerlink" title="2.2 平衡二叉树为什么不可行"></a>2.2 平衡二叉树为什么不可行</h4><p>为了解决二叉树存在线性链表的问题，会想到用平衡二叉查找树来解决。下面看看平衡二叉树是怎样的：</p>
-<p><img src="../images%5C20200516171035521.png" alt="20200516171035521"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images%5C20200516171035521.png" alt="20200516171035521"></p>
 <p>平衡二叉查找树定义为：节点的子节点高度差不能超过1,如上图中的节点20，左节点高度为1，右节点高度0，差为1，所以上图没有违反定义，它就是一个平衡二叉树。保证二叉树平衡的方式为左旋，右旋等操作，至于如何左旋右旋，可以自行去搜索相关的知识。</p>
 <p>如果上图中平衡二叉树保存的是id索引，现在要查找id = 8的数据，过程如下：</p>
 <ol>
@@ -201,16 +201,16 @@
 </ul>
 <h4 id="3-1-MyISAM存储引擎"><a href="#3-1-MyISAM存储引擎" class="headerlink" title="3.1 MyISAM存储引擎"></a>3.1 MyISAM存储引擎</h4><p>说明：为了画图简便，下面部分图使用在线数据结构工具进行组织数据，组织的B+Tree为右闭合区间，但不影响理解存储引擎数据存储结构。</p>
 <p>在MYISAM存储引擎中，数据和索引的关系如下：</p>
-<p><img src="../images%5C20200516185027444.png" alt="20200516185027444"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images%5C20200516185027444.png" alt="20200516185027444"></p>
 <p><strong>如何查找数据的呢</strong>？<br>        如果要查询id = 40的数据：先根据MyISAM索引文件（如上图左）去找id = 40的节点，通过这个节点的数据区拿到真正保存数据的磁盘地址，再通过这个地址从MYD数据文件（如上图右）中加载对应的记录。</p>
 <p>如果有多个索引，表现形式如下：</p>
-<p><img src="../images%5C20200516185926534.png" alt="20200516185926534"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images%5C20200516185926534.png" alt="20200516185926534"></p>
 <p>所以在MYISAM存储引擎中，主键索引和辅助索引是同级别的，没有主次之分。</p>
 <h4 id="3-2-Innodb存储引擎"><a href="#3-2-Innodb存储引擎" class="headerlink" title="3.2 Innodb存储引擎"></a>3.2 Innodb存储引擎</h4><p>Innodb主键索引为聚集索引，首先简单理解一下聚集索引的概念：数据库表行中数据的物理顺序和键值的逻辑顺序相同。</p>
 <p>Innodb以主键索引来聚集组织数据的存储，下面看看Innodb是如何组织数据的。</p>
 <p>如上图中，叶子节点的数据区保存的就是真实的数据，在通过索引进行检索的时候，命中叶子节点，就可以直接从叶子节点中取出行数据。mysql5.5版本之前默认采用的是MyISAM引擎，5.5之后默认采用的是innodb引擎。</p>
 <p>在innodb中，辅助索引的格式如下图所示:</p>
-<p><img src="../images%5C20200516190622724.png" alt="20200516190622724"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images%5C20200516190622724.png" alt="20200516190622724"></p>
 <p>如上图，主键索引的叶子节点保存的是真正的数据。而辅助索引叶子节点的数据区保存的是主键索引关键字的值。</p>
 <p>假如要查询name = C 的数据，其搜索过程如下：</p>
 <ol>
