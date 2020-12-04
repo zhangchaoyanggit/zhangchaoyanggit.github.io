@@ -147,7 +147,7 @@
 <p><a href="#总结">总结</a></p>
 <h1 id="ConcurrentHashMap-1-7"><a href="#ConcurrentHashMap-1-7" class="headerlink" title="ConcurrentHashMap 1.7"></a>ConcurrentHashMap 1.7</h1><p>首先我们来回顾一下在jdk1.7当中ConcurrentHashMap是如何实现的。</p>
 <p>还在jdk1.7的时候ConcurrentHashMap的底层数据结构其实是由<code>Segment</code>数组和多个<code>HashEntry</code>组成。如图：</p>
-<p><img src="/images/hashmap1.8-01.png" alt="img"></p>
+<p><img src="../images/hashmap1.8-01.png" alt="img"></p>
 <p>Segment数组的意义就是将一个大的table分割成多个小的table来进行加锁，也就是上面的提到的锁分段技术，而每一个Segment元素存储的是HashEntry数组+链表，这个和HashMap的散列表+链表的数据存储结构是一样的。这里的每个table就像我们之前所说的HashTable一样。</p>
 <p>不同于HashTable为了并发情况下的安全性锁整个table那么暴力不同，ConcurrentHashMap的处理方式则是对其进行了优化，是把一个大table分割成小table来分别锁住。也就是我们常说的锁分段。</p>
 <p>同时从源码中我们可以看出，Segment继承了ReentrantLock(独占锁)类。使大table中的每个小table都有了一个锁。</p>

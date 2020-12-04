@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://chaoyang66.gitee.io/"/>
-  <updated>2020-07-20T13:13:47.154Z</updated>
+  <updated>2020-11-27T14:54:10.819Z</updated>
   <id>https://chaoyang66.gitee.io/</id>
   
   <author>
@@ -17,11 +17,70 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>vim 命令</title>
+    <link href="https://chaoyang66.gitee.io/2020/11/27/vim%20%E5%91%BD%E4%BB%A4/"/>
+    <id>https://chaoyang66.gitee.io/2020/11/27/vim%20%E5%91%BD%E4%BB%A4/</id>
+    <published>2020-11-27T14:54:10.819Z</published>
+    <updated>2020-11-27T14:54:10.819Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;vim 命令&lt;/p&gt;
+&lt;p&gt;e :  行尾部&lt;/p&gt;
+&lt;p&gt;w: 行头部&lt;/p&gt;
+&lt;p&gt;dd 删除当前行&lt;/p&gt;
+&lt;p&gt;cc 剪切当前行&lt;/p&gt;
+&lt;p&gt;p 粘贴&lt;/p&gt;
+&lt;p&gt;u 撤销&lt;/p&gt;
+&lt;p&gt;ctrl +R 反撤销&lt;/p&gt;
+&lt;p&gt;r 替换&lt;/p&gt;
+&lt;p&gt;yy
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>大数据课程课前环境准备</title>
+    <link href="https://chaoyang66.gitee.io/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/"/>
+    <id>https://chaoyang66.gitee.io/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/</id>
+    <published>2020-09-28T17:14:23.000Z</published>
+    <updated>2020-12-04T16:03:37.497Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;大数据课程课前环境准备&quot;&gt;&lt;a href=&quot;#大数据课程课前环境准备&quot; class=&quot;headerlink&quot; title=&quot;大数据课程课前环境准备&quot;&gt;&lt;/a&gt;大数据课程课前环境准备&lt;/h1&gt;&lt;h2 id=&quot;一、课前准备&quot;&gt;&lt;a href=&quot;#一、课前准备&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="bigdata" scheme="https://chaoyang66.gitee.io/categories/bigdata/"/>
+    
+    
+      <category term="hadoop" scheme="https://chaoyang66.gitee.io/tags/hadoop/"/>
+    
+  </entry>
+  
+  <entry>
     <title>深入理解MysqlB+Tree</title>
     <link href="https://chaoyang66.gitee.io/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/"/>
     <id>https://chaoyang66.gitee.io/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/</id>
     <published>2020-05-29T13:43:22.000Z</published>
-    <updated>2020-07-20T13:13:47.154Z</updated>
+    <updated>2020-12-04T16:02:17.762Z</updated>
     
     <summary type="html">
     
@@ -44,11 +103,11 @@
   </entry>
   
   <entry>
-    <title>docker 学习笔记</title>
-    <link href="https://chaoyang66.gitee.io/2020/04/17/docker%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
-    <id>https://chaoyang66.gitee.io/2020/04/17/docker%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
+    <title>docker学习笔记</title>
+    <link href="https://chaoyang66.gitee.io/2020/04/17/docker%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    <id>https://chaoyang66.gitee.io/2020/04/17/docker%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
     <published>2020-04-17T14:34:56.000Z</published>
-    <updated>2020-06-28T07:14:19.407Z</updated>
+    <updated>2020-08-05T15:45:50.390Z</updated>
     
     <summary type="html">
     
@@ -56,7 +115,7 @@
       
         
         
-          &lt;h2 id=&quot;docker-学习笔记&quot;&gt;&lt;a href=&quot;#docker-学习笔记&quot; class=&quot;headerlink&quot; title=&quot;docker 学习笔记&quot;&gt;&lt;/a&gt;docker 学习笔记&lt;/h2&gt;&lt;h5 id=&quot;为什么不用虚拟机打包所有软件-生成镜像&quot;&gt;&lt;a
+          &lt;h2 id=&quot;docker学习笔记&quot;&gt;&lt;a href=&quot;#docker学习笔记&quot; class=&quot;headerlink&quot; title=&quot;docker学习笔记&quot;&gt;&lt;/a&gt;docker学习笔记&lt;/h2&gt;&lt;h5 id=&quot;为什么不用虚拟机打包所有软件-生成镜像&quot;&gt;&lt;a
         
       
     
@@ -400,7 +459,7 @@
     <link href="https://chaoyang66.gitee.io/2019/09/29/%E6%B5%85%E8%B0%88ConcurrentHashMap/"/>
     <id>https://chaoyang66.gitee.io/2019/09/29/%E6%B5%85%E8%B0%88ConcurrentHashMap/</id>
     <published>2019-09-28T16:16:03.000Z</published>
-    <updated>2020-06-28T06:57:20.074Z</updated>
+    <updated>2020-12-04T16:01:31.103Z</updated>
     
     <summary type="html">
     
@@ -455,7 +514,7 @@
     <link href="https://chaoyang66.gitee.io/2019/04/09/Mysql%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
     <id>https://chaoyang66.gitee.io/2019/04/09/Mysql%E9%9D%A2%E8%AF%95%E9%A2%98/</id>
     <published>2019-04-09T14:15:10.000Z</published>
-    <updated>2019-12-21T07:06:00.463Z</updated>
+    <updated>2020-08-04T14:10:46.018Z</updated>
     
     <summary type="html">
     
@@ -501,60 +560,6 @@
     
     
       <category term="一个请求的旅行过程" scheme="https://chaoyang66.gitee.io/tags/%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%9A%84%E6%97%85%E8%A1%8C%E8%BF%87%E7%A8%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SQL 的执行过程</title>
-    <link href="https://chaoyang66.gitee.io/2018/11/19/mybatis-SQL%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/"/>
-    <id>https://chaoyang66.gitee.io/2018/11/19/mybatis-SQL%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/</id>
-    <published>2018-11-18T16:15:05.000Z</published>
-    <updated>2019-12-21T07:04:14.755Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;MyBatis-源码分析-SQL-的执行过程&quot;&gt;&lt;a href=&quot;#MyBatis-源码分析-SQL-的执行过程&quot; class=&quot;headerlink&quot; title=&quot;MyBatis 源码分析 - SQL 的执行过程&quot;&gt;&lt;/a&gt;MyBatis 源码分析 -
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Mybatis" scheme="https://chaoyang66.gitee.io/categories/Mybatis/"/>
-    
-    
-      <category term="SQL 的执行过程" scheme="https://chaoyang66.gitee.io/tags/SQL-%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Configuration解析</title>
-    <link href="https://chaoyang66.gitee.io/2018/11/15/mybatis-configuration%E8%A7%A3%E6%9E%90/"/>
-    <id>https://chaoyang66.gitee.io/2018/11/15/mybatis-configuration%E8%A7%A3%E6%9E%90/</id>
-    <published>2018-11-15T15:46:19.000Z</published>
-    <updated>2019-12-21T07:04:49.397Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;Mybatis-Configuration解析&quot;&gt;&lt;a href=&quot;#Mybatis-Configuration解析&quot; class=&quot;headerlink&quot;
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Mybatis" scheme="https://chaoyang66.gitee.io/categories/Mybatis/"/>
-    
-    
-      <category term="configuration" scheme="https://chaoyang66.gitee.io/tags/configuration/"/>
     
   </entry>
   

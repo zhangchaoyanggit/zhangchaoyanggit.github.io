@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">16.5k</span>
+            <span class="post-count">16.6k</span>
         </span>
     </span>
 
@@ -325,6 +325,9 @@
 <p>为了提高搜索效率，我们需要考虑运用多列索引,由于索引文件以B－Tree格式保存，所以我们不用扫描任何记录，即可得到最终结果。</p>
 <p>注：在mysql中执行查询时，只能使用一个索引，如果我们在lname,fname,age上分别建索引,执行查询时，只能使用一个索引，mysql会选择一个最严格(获得结果集记录数最少)的索引。</p>
 <p><strong>最左前缀原则：</strong>顾名思义，就是最左优先，上例中我们创建了lname_fname_age多列索引,相当于创建了(lname)单列索引，(lname,fname)组合索引以及(lname,fname,age)组合索引。</p>
+</blockquote>
+<h4 id="19-In-和Or-的查询区别"><a href="#19-In-和Or-的查询区别" class="headerlink" title="**19. In 和Or 的查询区别"></a>**19. In 和Or 的查询区别</h4><blockquote>
+<p>or 会逐条匹配 匹配到了就下一条匹配，in 是通过二分查找法来进行匹配的 in使用到了索引。</p>
 </blockquote>
 <h2 id="二、索引"><a href="#二、索引" class="headerlink" title="二、索引"></a>二、索引</h2><h4 id="1-什么是索引？"><a href="#1-什么是索引？" class="headerlink" title="1.什么是索引？"></a><strong>1.什么是索引？</strong></h4><blockquote>
 <p><strong>何为索引：</strong></p>

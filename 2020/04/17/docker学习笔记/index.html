@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    docker 学习笔记 |  奋斗的皮皮虾
+    docker学习笔记 |  奋斗的皮皮虾
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -58,7 +58,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-docker 学习笔记"
+  id="post-docker学习笔记"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -69,14 +69,14 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  docker 学习笔记
+  docker学习笔记
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2020/04/17/docker%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+      <a href="/2020/04/17/docker%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
   <time datetime="2020-04-17T14:34:56.000Z" itemprop="datePublished">2020-04-17</time>
 </a> 
   <div class="article-category">
@@ -88,7 +88,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.6k</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -112,7 +112,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="docker-学习笔记"><a href="#docker-学习笔记" class="headerlink" title="docker 学习笔记"></a>docker 学习笔记</h2><h5 id="为什么不用虚拟机打包所有软件-生成镜像"><a href="#为什么不用虚拟机打包所有软件-生成镜像" class="headerlink" title="为什么不用虚拟机打包所有软件 生成镜像"></a>为什么不用虚拟机打包所有软件 生成镜像</h5><p>docker 是什么？</p>
+  <h2 id="docker学习笔记"><a href="#docker学习笔记" class="headerlink" title="docker学习笔记"></a>docker学习笔记</h2><h5 id="为什么不用虚拟机打包所有软件-生成镜像"><a href="#为什么不用虚拟机打包所有软件-生成镜像" class="headerlink" title="为什么不用虚拟机打包所有软件 生成镜像"></a>为什么不用虚拟机打包所有软件 生成镜像</h5><p>docker 是什么？</p>
 <p> 一种容器技术 基于go语言实现</p>
 <p><strong>docker 镜像到底是什么?</strong></p>
 <p>​    docker镜像就是一个文件系统  文件和元数据的集合</p>
@@ -189,7 +189,7 @@
 </li>
 </ul>
 <p><strong>构建dockerFile</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">docker build -t mydemo .  </span><br><span class="line">    #mydemo 镜像名字  . 指当前目录下</span><br><span class="line"></span><br><span class="line">运行容器</span><br><span class="line">docker run -d --restart=always --name demo -p <span class="number">8080</span>:<span class="number">8080</span>  mydemo   这个表示docker容器在停止或服务器开机之后会自动重新启动 --restart=always</span><br><span class="line"></span><br><span class="line">然后docker ps 看看你的容器有没有在运行即可 </span><br><span class="line"></span><br><span class="line">docker logs --tail  <span class="number">300</span> -f  demo  查看启动日志 </span><br><span class="line"></span><br><span class="line"> 如果docker run 的时候没有加 --restart=always ，然后已经运行的docker容器怎么设置自动重启？ 执行下面命令：</span><br><span class="line"></span><br><span class="line">docker update –-restart=always demo </span><br><span class="line"></span><br><span class="line">demo : 你的容器名称</span><br><span class="line">    </span><br><span class="line">挂载目录并启动jar    </span><br><span class="line">    docker run -d -p <span class="number">8060</span>:<span class="number">9000</span> --name devdemo -v /server-demo/deploy/jar/:/sof --privilo.jar /bin/bash</span><br><span class="line">        </span><br><span class="line">         docker run -d --restart=always -v /server-demo/deploy/jar/:/jar  -p <span class="number">7778</span>:<span class="number">9100</span> --namdk8  java -jar -Duser.timezone=GMT+<span class="number">08</span> /jar/demo.jar</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">docker build -t mydemo .  </span><br><span class="line">  #mydemo 镜像名字  . 指当前目录下</span><br><span class="line"></span><br><span class="line">运行容器</span><br><span class="line">docker run -d --restart=always --name demo -p <span class="number">8080</span>:<span class="number">8080</span>  mydemo   这个表示docker容器在停止或服务器开机之后会自动重新启动 --restart=always</span><br><span class="line"></span><br><span class="line">docker container update --restart=always +容器id or 名称 </span><br><span class="line">    </span><br><span class="line">然后docker ps 看看你的容器有没有在运行即可 </span><br><span class="line"></span><br><span class="line">docker logs --tail  <span class="number">300</span> -f  demo  查看启动日志 </span><br><span class="line"></span><br><span class="line"> 如果docker run 的时候没有加 --restart=always ，然后已经运行的docker容器怎么设置自动重启？ 执行下面命令：</span><br><span class="line"></span><br><span class="line">docker update –-restart=always demo </span><br><span class="line"></span><br><span class="line">demo : 你的容器名称</span><br><span class="line">    </span><br><span class="line">挂载目录并启动jar    </span><br><span class="line">    docker run -d -p <span class="number">8060</span>:<span class="number">9000</span> --name devdemo -v /server-demo/deploy/jar/:/sof --privilo.jar /bin/bash</span><br><span class="line">        </span><br><span class="line">         docker run -d --restart=always -v /server-demo/deploy/jar/:/jar  -p <span class="number">7778</span>:<span class="number">9100</span> --namdk8  java -jar -Duser.timezone=GMT+<span class="number">08</span> /jar/demo.jar</span><br></pre></td></tr></table></figure>
 
 
 
@@ -296,7 +296,7 @@ discovery.zen.minimum_master_nodes: 2</code></pre>
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://chaoyang66.gitee.io/2020/04/17/docker%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://chaoyang66.gitee.io/2020/04/17/docker%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" alt="微信分享二维码">
     </div>
 </div>
 
