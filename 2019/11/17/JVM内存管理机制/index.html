@@ -121,7 +121,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>. 方法区</span><br><span class="line"><span class="number">2</span>. 堆区</span><br><span class="line"><span class="number">3</span>. 本地方法栈</span><br><span class="line"><span class="number">4</span>. 虚拟机栈</span><br><span class="line"><span class="number">5</span>. 程序计数器</span><br></pre></td></tr></table></figure>
 
 <p>其中，方法区和堆是所有线程共享的。</p>
-<p><img src="images/1.png" alt="image-20191117223633804"></p>
+<p><img src="/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/1.png" alt="image-20191117223633804"></p>
 <h4 id="2-1-方法区"><a href="#2-1-方法区" class="headerlink" title="2.1 方法区"></a>2.1 方法区</h4><p>方法区存放了要加载的类的信息(如类名，修饰符)、类中的静态变量、final定义的常量、类中的field、方法信息，当开发人员调用类对象中的getName、isInterface等方法来获取信息时，这些数据都来源于方法区。方法区是全局共享的，在一定条件下它也会被GC。当方法区使用的内存超过它允许的大小时，就会抛出OutOfMemory：PermGen Space异常。</p>
 <p>在Hotspot虚拟机中，这块区域对应的是Permanent Generation(持久代)，一般的，方法区上执行的垃圾收集是很少的，因此方法区又被称为持久代的原因之一，但这也不代表着在方法区上完全没有垃圾收集，其上的垃圾收集主要是针对常量池的内存回收和对已加载类的卸载。在方法区上进行垃圾收集，条件苛刻而且相当困难，关于其回后面再介绍。</p>
 <p>运行时常量池（Runtime Constant Pool）是方法区的一部分，用于存储编译期就生成的字面常量、符号引用、翻译出来的直接引用（符号引用就是编码是用字符串表示某个变量、接口的位置，直接引用就是根据符号引用翻译出来的地址，将在类链接阶段完成翻译）；运行时常量池除了存储编译期常量外，也可以存储在运行时间产生的常量，比如String类的intern()方法，作用是String维护了一个常量池，如果调用的字符“abc”已经在常量池中，则返回池中的字符串地址，否则，新建一个常量加入池中，并返回地址。</p>
@@ -129,7 +129,7 @@
 <h4 id="2-2-堆区"><a href="#2-2-堆区" class="headerlink" title="2.2 堆区"></a>2.2 堆区</h4><p>堆区是理解JavaGC机制最重要的区域。在JVM所管理的内存中，堆区是最大的一块，堆区也是JavaGC机制所管理的主要内存区域，堆区由所有线程共享，在虚拟机启动时创建。堆区用来存储对象实例及数组值，可以认为java中所有通过new创建的对象都在此分配。</p>
 <p>对于堆区大小，可以通过参数-Xms和-Xmx来控制，-Xms为JVM启动时申请的最新heap内存，默认为物理内存的1/64但小于1GB;-Xmx为JVM可申请的最大Heap内存，默认为物理内存的1/4但小于1GB,默认当剩余堆空间小于40%时，JVM会增大Heap到-Xmx大小，可通过-XX:MinHeapFreeRadio参数来控制这个比例；当空余堆内存大于70%时，JVM会减小Heap大小到-Xms指定大小，可通过-XX:MaxHeapFreeRatio来指定这个比例。对于系统而言，为了避免在运行期间频繁的调整Heap大小，我们通常将-Xms和-Xmx设置成一样。</p>
 <p>为了让内存回收更加高效（后面会具体讲为何要分代划分），从Sun JDK 1.2开始对堆采用了分代管理方式，如下图所示：</p>
-<p><img src="images/image-20191117223859110.png" alt="image-20191117223859110"></p>
+<p><img src="/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/image-20191117223859110.png" alt="image-20191117223859110"></p>
 <h5 id="年轻代（Young-Generation）"><a href="#年轻代（Young-Generation）" class="headerlink" title="年轻代（Young Generation）"></a>年轻代（Young Generation）</h5><p>对象在被创建时，内存首先是在年轻代进行分配（注意，大对象可以直接在老年代分配）。当年轻代需要回收时会触发Minor GC(也称作Young GC)。</p>
 <p>年轻代由Eden Space和两块相同大小的Survivor Space（又称S0和S1）构成，可通过-Xmn参数来调整新生代大小，也可通过-XX:SurvivorRadio来调整Eden Space和Survivor Space大小。不同的GC方式会按不同的方式来按此值划分Eden Space和Survivor Space，有些GC方式还会根据运行状况来动态调整Eden、S0、S1的大小。</p>
 <p>年轻代的Eden区内存是连续的，所以其分配会非常快；同样Eden区的回收也非常快（因为大部分情况下Eden区对象存活时间非常短，而Eden区采用的复制回收算法，此算法在存活对象比例很少的情况下非常高效，后面会详细介绍）。</p>
@@ -146,21 +146,21 @@
 <h4 id="2-6-Java对象访问方式"><a href="#2-6-Java对象访问方式" class="headerlink" title="2.6 Java对象访问方式"></a>2.6 Java对象访问方式</h4><p>一般来说，一个Java的引用访问涉及到3个内存区域：JVM栈，堆，方法区。以最简单的本地变量引用：Object objRef = new Object()为例：</p>
 <p>Object objRef 表示一个本地引用，存储在JVM栈的本地变量表中，表示一个reference类型数据；<br>new Object()作为实例对象数据存储在堆中；<br>堆中还记录了能够查询到此Object对象的类型数据（接口、方法、field、对象类型等）的地址，实际的数据则存储在方法区中；<br>在Java虚拟机规范中，只规定了指向对象的引用，对于通过reference类型引用访问具体对象的方式并未做规定，不过目前主流的实现方式主要有两种：</p>
 <h5 id="2-6-1-通过句柄访问"><a href="#2-6-1-通过句柄访问" class="headerlink" title="2.6.1 通过句柄访问"></a>2.6.1 通过句柄访问</h5><p>通过句柄访问的实现方式中，JVM堆中会划分单独一块内存区域作为句柄池，句柄池中存储了对象实例数据（在堆中）和对象类型数据（在方法区中）的指针。这种实现方法由于用句柄表示地址，因此十分稳定。</p>
-<p><img src="images/image-20191117224109578.png" alt="image-20191117224109578"></p>
-<h5 id="2-6-2-通过直接指针访问"><a href="#2-6-2-通过直接指针访问" class="headerlink" title="2.6.2 通过直接指针访问"></a>2.6.2 通过直接指针访问</h5><p>通过直接指针访问的方式中，reference中存储的就是对象在堆中的实际地址，在堆中存储的对象信息中包含了在方法区中的相应类型数据。这种方法最大的优势是速度快，在HotSpot虚拟机中用的就是这种方式。<br><img src="images/image-20191117232613814.png" alt="image-20191117232613814"></p>
+<p><img src="/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/image-20191117224109578.png" alt="image-20191117224109578"></p>
+<h5 id="2-6-2-通过直接指针访问"><a href="#2-6-2-通过直接指针访问" class="headerlink" title="2.6.2 通过直接指针访问"></a>2.6.2 通过直接指针访问</h5><p>通过直接指针访问的方式中，reference中存储的就是对象在堆中的实际地址，在堆中存储的对象信息中包含了在方法区中的相应类型数据。这种方法最大的优势是速度快，在HotSpot虚拟机中用的就是这种方式。<br><img src="/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/image-20191117232613814.png" alt="image-20191117232613814"></p>
 <h3 id="三、JVM内存分配"><a href="#三、JVM内存分配" class="headerlink" title="三、JVM内存分配"></a>三、JVM内存分配</h3><p>Java对象所占用的内存主要在堆上实现，因为堆是线程共享的，因此在堆上分配内存时需要进行加锁，这就导致了创建对象的开销比较大。当堆上空间不足时，会出发GC，如果GC后空间仍然不足，则会抛出OutOfMemory异常。</p>
 <p>为了提升内存分配效率，在年轻代的Eden区HotSpot虚拟机使用了两种技术来加快内存分配 ，分别是bump-the-pointer和TLAB（Thread-Local Allocation Buffers）。由于Eden区是连续的，因此bump-the-pointer技术的核心就是跟踪最后创建的一个对象，在对象创建时，只需要检查最后一个对象后面是否有足够的内存即可，从而大大加快内存分配速度；而对于TLAB技术是对于多线程而言的， 它会为每个新创建的线程在新生代的Eden Space上分配一块独立的空间，这块空间称为TLAB（Thread Local Allocation Buffer），其大小由JVM根据运行情况计算而得。可通过-XX:TLABWasteTargetPercent来设置其可占用的Eden Space的百分比，默认是1%。在TLAB上分配内存不需要加锁，一般JVM会优先在TLAB上分配内存，如果对象过大或者TLAB空间已经用完，则仍然在堆上进行分配。因此，在编写程序时，多个小对象比大的对象分配起来效率更高。可在启动参数上增加-XX:+PrintTLAB来查看TLAB空间的使用情况。</p>
-<p> <img src="images/image-20191117224220284.png" alt="image-20191117224220284"></p>
+<p> <img src="/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/image-20191117224220284.png" alt="image-20191117224220284"></p>
 <p>对象如果在年轻代存活了足够长的时间而没有被清理掉（即在几次Minor GC后存活了下来），则会被复制到年老代，年老代的空间一般比年轻代大，能存放更多的对象，在年老代上发生的GC次数也比年轻代少。当年老代内存不足时，将执行Major GC，也叫 Full GC。</p>
 <p>可以使用-XX:+UseAdaptiveSizePolicy开关来控制是否采用动态控制策略，如果动态控制，则动态调整Java堆中各个区域的大小以及进入老年代的年龄。</p>
 <p>如果对象比较大（比如长字符串或大数组），年轻代空间不足，则大对象会直接分配到老年代上（大对象可能触发提前GC，应少用，更应避免使用短命的大对象）。用 -XX:PretenureSizeThreshold来控制直接升入老年代的对象大小，大于这个值的对象会直接分配在老年代上。</p>
 <h3 id="四、内存的回收方式"><a href="#四、内存的回收方式" class="headerlink" title="四、内存的回收方式"></a>四、内存的回收方式</h3><p>JVM通过GC来回收堆和方法区中的内存，这个过程是自动执行的。说到Java GC机制，其主要完成3件事：确定哪些内存需要回收；确定什么时候需要执行GC；如何执行GC。JVM主要采用收集器的方式实现GC，主要的收集器有引用计数收集器和跟踪收集器。</p>
 <h4 id="4-1-引用计数收集器"><a href="#4-1-引用计数收集器" class="headerlink" title="4.1 引用计数收集器"></a>4.1 引用计数收集器</h4><p>引用计数器采用分散式管理方式，通过计数器记录对象是否被引用。当计数器为0时，说明此对象已经不再被使用，可进行回收，如图所示：</p>
-<p><img src="images/image-20191117224653985.png" alt="image-20191117224653985"></p>
+<p><img src="/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/image-20191117224653985.png" alt="image-20191117224653985"></p>
 <p>在上图中，ObjectA释放了对ObjectB的引用后，ObjectB的引用计数器变为0，此时可回收ObjectB所占有的内存。</p>
 <p>引用计数器需要在每次对象赋值时进行引用计数器的增减，他有一定消耗。另外，引用计数器对于循环引用的场景没有办法实现回收。例如在上面的例子中，如果ObjectB和ObjectC互相引用，那么即使ObjectA释放了对ObjectB和ObjectC的引用，也无法回收ObjectB、ObjectC，因此对于java这种会形成复杂引用关系的语言而言，引用计数器是非常不适合的，SunJDK在实现GC时也未采用这种方式。</p>
 <h4 id="4-2可达性分析"><a href="#4-2可达性分析" class="headerlink" title="4.2可达性分析"></a><strong>4.2可达性分析</strong></h4><p>设立若干根对象（GC Root），每个对象都是一个子节点，当一个对象找不到根时，就认为该对象不可达。</p>
-<p><img src="images/image-gcroot.png" alt="image-20191120225326756"></p>
+<p><img src="/2019/11/17/JVM%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/image-gcroot.png" alt="image-20191120225326756"></p>
 <p>没有一条从根到Object4 和 Object5的路径，说明这两个对象到根是不可达的，可以被回收</p>
 <p>补充：java中，可以作为GC Roots的对象包括：</p>
 <p><strong>java虚拟机栈中引用的对象</strong><br>方法区中静态变量引用的对象和常量引用的对象</p>

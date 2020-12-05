@@ -166,7 +166,7 @@
 <p>1、Java 使用对象锁 ( 使用 synchronized 获得对象锁 ) 保证工作在共享的数据集上的线程互斥执行。</p>
 <p>2、使用 notify/notifyAll/wait 方法来协同不同线程之间的工作。</p>
 <p>3、Class和Object都关联了一个Monitor。</p>
-<p><img src="images/sync_2.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_2.png" alt="img"></p>
 <p>Monitor 的工作机理</p>
 <ul>
 <li>线程进入同步方法中。</li>
@@ -182,7 +182,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedTest</span> </span>&#123;   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>&#123;   </span><br><span class="line">        System.out.println(<span class="string">"Hello World!"</span>);   </span><br><span class="line">    &#125;    </span><br><span class="line">    <span class="function"><span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;      </span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>)&#123;        </span><br><span class="line">            System.out.println(<span class="string">"Hello World!"</span>);      </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>javap编译后的字节码如下：</p>
-<p><img src="images/sync_3.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_3.png" alt="img"></p>
 <p><strong>monitorenter</strong></p>
 <p>每一个对象都有一个monitor，一个monitor只能被一个线程拥有。当一个线程执行到monitorenter指令时会尝试获取相应对象的monitor，获取规则如下：</p>
 <ul>
@@ -192,22 +192,22 @@
 </ul>
 <p><strong>monitorexit</strong></p>
 <p>只有拥有相应对象的monitor的线程才能执行monitorexit指令。每执行一次该指令monitor进入数减1，当进入数为0时当前线程释放monitor，此时其他阻塞的线程将可以尝试获取该monitor。</p>
-<h3 id="2-2-3-锁存放的位置"><a href="#2-2-3-锁存放的位置" class="headerlink" title="2.2.3 锁存放的位置"></a>2.2.3 锁存放的位置</h3><p> <img src="images/sync_4.png" alt="image-20191125235535900"></p>
+<h3 id="2-2-3-锁存放的位置"><a href="#2-2-3-锁存放的位置" class="headerlink" title="2.2.3 锁存放的位置"></a>2.2.3 锁存放的位置</h3><p> <img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_4.png" alt="image-20191125235535900"></p>
 <h3 id="2-2-3-synchronized的锁优化"><a href="#2-2-3-synchronized的锁优化" class="headerlink" title="2.2.3 synchronized的锁优化"></a>2.2.3 synchronized的锁优化</h3><p>JavaSE1.6为了减少获得锁和释放锁带来的性能消耗，引入了“偏向锁”和“轻量级锁”。</p>
 <p>在JavaSE1.6中，锁一共有4种状态，级别从低到高依次是：无锁状态、偏向锁状态、轻量级锁状态和重量级锁状态，这几个状态会随着竞争情况逐渐升级。</p>
 <p>锁可以升级但不能降级，意味着偏向锁升级成轻量级锁后不能降级成偏向锁。这种锁升级却不能降级的策略，目的是为了提高获得锁和释放锁的效率。</p>
 <h4 id="偏向锁："><a href="#偏向锁：" class="headerlink" title="偏向锁："></a>偏向锁：</h4><blockquote>
 <p>无锁竞争的情况下为了减少锁竞争的资源开销，引入偏向锁。</p>
 </blockquote>
-<p><img src="images/sync_5.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_5.png" alt="img"></p>
 <h4 id="轻量级锁："><a href="#轻量级锁：" class="headerlink" title="轻量级锁："></a>轻量级锁：</h4><blockquote>
 <p>轻量级锁所适应的场景是线程交替执行同步块的情况。</p>
 </blockquote>
-<p><img src="images/sync_6.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_6.png" alt="img"></p>
 <p><strong>锁粗化（Lock Coarsening）：</strong>也就是减少不必要的紧连在一起的unlock，lock操作，将多个连续的锁扩展成一个范围更大的锁。</p>
 <p><strong>锁消除（Lock Elimination）：</strong>锁削除是指虚拟机即时编译器在运行时，对一些代码上要求同步，但是被检测到不可能存在共享数据竞争的锁进行削除。</p>
 <p><strong>适应性自旋（Adaptive Spinning）：</strong>自适应意味着自旋的时间不再固定了，而是由前一次在同一个锁上的自旋时间及锁的拥有者的状态来决定。如果在同一个锁对象上，自旋等待刚刚成功获得过锁，并且持有锁的线程正在运行中，那么虚拟机就会认为这次自旋也很有可能再次成功，进而它将允许自旋等待持续相对更长的时间，比如100个循环。另一方面，如果对于某个锁，自旋很少成功获得过，那在以后要获取这个锁时将可能省略掉自旋过程，以避免浪费处理器资源。</p>
-<h3 id="2-2-4-锁的优缺点对比"><a href="#2-2-4-锁的优缺点对比" class="headerlink" title="2.2.4 锁的优缺点对比"></a>2.2.4 锁的优缺点对比</h3><p><img src="images/sync_7.png" alt="img"></p>
+<h3 id="2-2-4-锁的优缺点对比"><a href="#2-2-4-锁的优缺点对比" class="headerlink" title="2.2.4 锁的优缺点对比"></a>2.2.4 锁的优缺点对比</h3><p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_7.png" alt="img"></p>
 <h2 id="2-3、CAS"><a href="#2-3、CAS" class="headerlink" title="2.3、CAS"></a>2.3、CAS</h2><blockquote>
 <p>CAS，在Java并发应用中通常指CompareAndSwap或CompareAndSet，即比较并交换。</p>
 </blockquote>
@@ -226,18 +226,18 @@
 <h1 id="3、Java中的锁实现"><a href="#3、Java中的锁实现" class="headerlink" title="3、Java中的锁实现"></a>3、Java中的锁实现</h1><h2 id="3-1、队列同步器（AQS）"><a href="#3-1、队列同步器（AQS）" class="headerlink" title="3.1、队列同步器（AQS）"></a>3.1、队列同步器（AQS）</h2><blockquote>
 <p>队列同步器AbstractQueuedSynchronizer（以下简称同步器），是用来构建锁或者其他同步组件的基础框架。</p>
 </blockquote>
-<h3 id="3-1-1、它使用了一个int成员变量表示同步状态。"><a href="#3-1-1、它使用了一个int成员变量表示同步状态。" class="headerlink" title="3.1.1、它使用了一个int成员变量表示同步状态。"></a>3.1.1、它使用了一个int成员变量表示同步状态。</h3><p><img src="images/sync_8.png" alt="img"></p>
+<h3 id="3-1-1、它使用了一个int成员变量表示同步状态。"><a href="#3-1-1、它使用了一个int成员变量表示同步状态。" class="headerlink" title="3.1.1、它使用了一个int成员变量表示同步状态。"></a>3.1.1、它使用了一个int成员变量表示同步状态。</h3><p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_8.png" alt="img"></p>
 <h3 id="3-1-2、通过内置的FIFO双向队列来完成获取锁线程的排队工作。"><a href="#3-1-2、通过内置的FIFO双向队列来完成获取锁线程的排队工作。" class="headerlink" title="3.1.2、通过内置的FIFO双向队列来完成获取锁线程的排队工作。"></a>3.1.2、通过内置的FIFO双向队列来完成获取锁线程的排队工作。</h3><ul>
 <li><p>同步器包含两个节点类型的应用，一个指向头节点，一个指向尾节点，未获取到锁的线程会创建节点线程安全（compareAndSetTail）的加入队列尾部。同步队列遵循FIFO，首节点是获取同步状态成功的节点。</p>
-<p><img src="images/sync_9.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_9.png" alt="img"></p>
 </li>
 <li><p>未获取到锁的线程将创建一个节点，设置到尾节点。如下图所示：</p>
 </li>
 </ul>
-<p><img src="images/sync_10.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_10.png" alt="img"></p>
 <ul>
 <li><p>首节点的线程在释放锁时，将会唤醒后继节点。而后继节点将会在获取锁成功时将自己设置为首节点。如下图所示：</p>
-<p><img src="images/sync_11.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_11.png" alt="img"></p>
 </li>
 </ul>
 <h3 id="3-1-3、独占式-共享式锁获取"><a href="#3-1-3、独占式-共享式锁获取" class="headerlink" title="3.1.3、独占式/共享式锁获取"></a>3.1.3、独占式/共享式锁获取</h3><blockquote>
@@ -246,22 +246,22 @@
 </blockquote>
 <h4 id="独占式"><a href="#独占式" class="headerlink" title="独占式"></a>独占式</h4><ul>
 <li><p>每个节点自旋观察自己的前一节点是不是Header节点，如果是，就去尝试获取锁。</p>
-<p><img src="images/sync_12.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_12.png" alt="img"></p>
 </li>
 <li><p>独占式锁获取流程：</p>
 </li>
 </ul>
-<p><img src="images/sync_13.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_13.png" alt="img"></p>
 <h4 id="共享式："><a href="#共享式：" class="headerlink" title="共享式："></a>共享式：</h4><ul>
 <li><p>共享式与独占式的区别：</p>
-<p><img src="images/sync_14.png" alt="img"></p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_14.png" alt="img"></p>
 </li>
 <li><p>共享锁获取流程：</p>
 </li>
 </ul>
-<p><img src="images/sync_15.png" alt="img"></p>
-<h1 id="4、锁的使用用例"><a href="#4、锁的使用用例" class="headerlink" title="4、锁的使用用例"></a>4、锁的使用用例</h1><h2 id="4-1、ConcurrentHashMap的实现原理及使用"><a href="#4-1、ConcurrentHashMap的实现原理及使用" class="headerlink" title="4.1、ConcurrentHashMap的实现原理及使用"></a>4.1、ConcurrentHashMap的实现原理及使用</h2><p><img src="images/sync_16.png" alt="ConcurrentHashMap类图">ConcurrentHashMap类图</p>
-<p><img src="images/sync_17.png" alt="ConcurrentHashMap数据结构">ConcurrentHashMap数据结构</p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_15.png" alt="img"></p>
+<h1 id="4、锁的使用用例"><a href="#4、锁的使用用例" class="headerlink" title="4、锁的使用用例"></a>4、锁的使用用例</h1><h2 id="4-1、ConcurrentHashMap的实现原理及使用"><a href="#4-1、ConcurrentHashMap的实现原理及使用" class="headerlink" title="4.1、ConcurrentHashMap的实现原理及使用"></a>4.1、ConcurrentHashMap的实现原理及使用</h2><p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_16.png" alt="ConcurrentHashMap类图">ConcurrentHashMap类图</p>
+<p><img src="/2019/11/15/JAVA%E4%B8%AD%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/sync_17.png" alt="ConcurrentHashMap数据结构">ConcurrentHashMap数据结构</p>
 <p>结论：ConcurrentHashMap使用的锁分段技术。首先将数据分成一段一段地存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据的时候，其他段的数据也能被其他线程访问。</p>
 <p>转载至： 微信公众号 <strong>芋艿源码</strong>。</p>
  

@@ -145,7 +145,7 @@
 <li><p>VMware虚拟机软件是一个“虚拟<a href="https://baike.baidu.com/item/PC/107" target="_blank" rel="noopener">PC</a>”软件，它使你可以在一台机器上同时运行二个或更多<a href="https://baike.baidu.com/item/Windows" target="_blank" rel="noopener">Windows</a>、<a href="https://baike.baidu.com/item/DOS/32025" target="_blank" rel="noopener">DOS</a>、<a href="https://baike.baidu.com/item/LINUX" target="_blank" rel="noopener">LINUX</a>系统。与“多启动”系统相比，<a href="https://baike.baidu.com/item/VMWare" target="_blank" rel="noopener">VMWare</a>采用了完全不同的概念。</p>
 </li>
 <li><p>我们可以通过VMware来安装我们的linux虚拟机，然后通过linux虚拟机来进行集群的安装，VMware的安装双击之后，一路下一步即可，尽量不要装在操作系统盘里面了，VMware的安装步骤省略</p>
-<img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/vm.png" style="zoom:80%;">
+<img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/vm.png" style="zoom:80%;">
 
 </li>
 </ul>
@@ -153,71 +153,71 @@
 <li>我们通过Vmware可以安装第一台我们的linux机器，接下来我们来看如何通过VMWare创建linux虚拟机，并给我们的虚拟机挂载操作系统</li>
 </ul>
 <p>1：双击Vmware打开之后，点击创建新的虚拟机</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/1.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/1.png" alt="img"></p>
 <p>2：选择自定义安装配置</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/2.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200513103314891.png" alt="image-20200513103314891"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/2.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200513103314891.png" alt="image-20200513103314891"></p>
 <p>3：选择稍后安装操作系统</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/4.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/4.png" alt="img"></p>
 <p>4：选择稍后安装操作系统</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/5.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/5.png" alt="img"></p>
 <p>5：选择安装路径，==尽量不要放在C盘，并且所在盘符的剩余空间尽量大些==</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200513103635615.png" alt="image-20200513103635615"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200513103635615.png" alt="image-20200513103635615"></p>
 <p>6：CPU核数，默认即可</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/7.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/7.png" alt="img"></p>
 <p>7：虚拟机内存根据自身windows电脑进行调整</p>
 <p>例如如果windows是8GB内存，那么每台虚拟机内存给2048M内存，如果windows是16GB没存，那么每台虚拟机可以给3072M内存即可</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/8.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/8.png" alt="img"></p>
 <p>8：网络配置一定要选择==NAT==</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/9.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/10.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/11.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/9.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/10.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/11.png" alt="img"></p>
 <p>9：磁盘大小尽量给40GB</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/12.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/12.png" alt="img"></p>
 <p>注意：千万==不要==勾选“立即分配所有磁盘空间”</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/13.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200513104013911.png" alt="image-20200513104013911"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/13.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200513104013911.png" alt="image-20200513104013911"></p>
 <p>10：完成</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200513104053651.png" alt="image-20200513104053651"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200513104053651.png" alt="image-20200513104053651"></p>
 <h4 id="3-为我们创建的linux虚拟机挂载操作系统"><a href="#3-为我们创建的linux虚拟机挂载操作系统" class="headerlink" title="3. 为我们创建的linux虚拟机挂载操作系统"></a>3. 为我们创建的linux虚拟机挂载操作系统</h4><ul>
 <li>我们现在已经有了一台虚拟电脑了，就类似我们刚刚买了一台电脑回来，只不过不同的是我们这台虚拟电脑还没有操作系统我们需要为这台电脑挂在操作系统出来</li>
 </ul>
 <p>1：通过设置来挂载操作系统</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/16.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/17.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/18.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/16.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/17.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/18.png" alt="img"></p>
 <p>2：直接回车开始安装</p>
 <p>用键盘的方向键，选中“Install CentOS 7”,然后按回车，开始安装</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200715134015711.png" alt="image-20200715134015711"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200715134015711.png" alt="image-20200715134015711"></p>
 <p>再按回车键</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/19.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/19.png" alt="img"></p>
 <p>3：设置键盘为英文键盘</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20201021111652532.png" alt="image-20201021111652532"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20201021111652532.png" alt="image-20201021111652532"></p>
 <p>4：接下来配置这三项</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/21.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/21.png" alt="img"></p>
 <p>（1）设置①时区为Asia/Shanghai</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/22.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20201021111858683.png" alt="image-20201021111858683"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/22.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20201021111858683.png" alt="image-20201021111858683"></p>
 <p>（2）设置②INSTALATION DESTINATION</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20201021112000200.png" alt="image-20201021112000200"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/23.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20201021112000200.png" alt="image-20201021112000200"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/23.png" alt="img"></p>
 <p>（3）设置③NETWORK &amp; HOST NAME</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200513105009692.png" alt="image-20200513105009692"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200513105009692.png" alt="image-20200513105009692"></p>
 <p>5：设置root用户密码</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/26.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/26.png" alt="img"></p>
 <p>6：安装完成之后重启reboot即可</p>
 <p>此过程稍长，耐心等待</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200513105644118.png" alt="image-20200513105644118"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200513105644118.png" alt="image-20200513105644118"></p>
 <h4 id="4-为我们的linux虚拟机设置网络配置"><a href="#4-为我们的linux虚拟机设置网络配置" class="headerlink" title="4. 为我们的linux虚拟机设置网络配置"></a>4. 为我们的linux虚拟机设置网络配置</h4><ul>
 <li>我们的linux虚拟机已经创建并挂载好了操作系统，接下来我们可以为我们的第一台虚拟机来设置网络地址了，设置网络地址比较麻烦，尽量<strong>参见视频</strong>进行一步步的操作</li>
 </ul>
 <p>1：设置虚拟机的网段</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/28.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/28.png" alt="img"></p>
 <p>2：查看==NAT模式==的网关，子网IP以及子网掩码</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20201019113303256.png" alt="image-20201019113303256"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20201019113303256.png" alt="image-20201019113303256"></p>
 <p>3：设置window当中的VMNet8网络地址</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/30.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20201019114244290.png" alt="image-20201019114244290"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/30.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20201019114244290.png" alt="image-20201019114244290"></p>
 <p>4：设置linux当中的网络</p>
 <ul>
 <li><p>我们已经配置好了Vmware当中的网络、windows当中的网络；</p>
@@ -227,7 +227,7 @@
 <li><p>登录linux</p>
 </li>
 </ul>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/32.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/32.png" alt="img"></p>
 <p>编辑配置文件</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-ens33</span><br></pre></td></tr></table></figure>
 
@@ -235,7 +235,7 @@
 <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">IPADDR</span>=<span class="string">192.168.51.100</span></span><br><span class="line"><span class="attr">NETMASK</span>=<span class="string">255.255.255.0</span></span><br><span class="line"><span class="attr">GATEWAY</span>=<span class="string">192.168.51.1</span></span><br><span class="line"><span class="attr">DNS1</span>=<span class="string">8.8.8.8</span></span><br></pre></td></tr></table></figure>
 
 <p>具体参考下图</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20201019114510503.png" alt="image-20201019114510503"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20201019114510503.png" alt="image-20201019114510503"></p>
 <p>更改完成配置，重启网络服务</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart network</span><br></pre></td></tr></table></figure>
 
@@ -253,12 +253,12 @@
 <li><p>关闭linux种子机器，然后准备进行克隆</p>
 </li>
 </ul>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/34.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200513111624820.png" alt="image-20200513111624820"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/35.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/34.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200513111624820.png" alt="image-20200513111624820"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/35.png" alt="img"></p>
 <p>选择创建完整克隆</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/36.png" alt="img"></p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200513111854167.png" alt="image-20200513111854167"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/36.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200513111854167.png" alt="image-20200513111854167"></p>
 <h4 id="6-更改克隆机器的IP地址"><a href="#6-更改克隆机器的IP地址" class="headerlink" title="6. 更改克隆机器的IP地址"></a>6. 更改克隆机器的IP地址</h4><ul>
 <li><p>三台机器的ip地址分别是<code>192.168.51.100、192.168.51.110、192.168.51.120</code></p>
 </li>
@@ -334,7 +334,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install ntpdate</span><br></pre></td></tr></table></figure>
 
 <p>安装后如下图</p>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/38.png" alt="img"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/38.png" alt="img"></p>
 <p>node01安装ntp</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install ntp</span><br></pre></td></tr></table></figure>
 
@@ -356,7 +356,7 @@
 <p><font color="red">注释掉以下这四行内容</font></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">server 0.centos.pool.ntp.org iburst</span></span><br><span class="line"><span class="meta">#</span><span class="bash">server 1.centos.pool.ntp.org iburst</span></span><br><span class="line"><span class="meta">#</span><span class="bash">server 2.centos.pool.ntp.org iburst</span></span><br><span class="line"><span class="meta">#</span><span class="bash">server 3.centos.pool.ntp.org iburst</span></span><br></pre></td></tr></table></figure>
 
-<p> <img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/39.png" alt="img"></p>
+<p> <img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/39.png" alt="img"></p>
 <p>修改完成之后，重启node01的ntpd服务</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart ntpd</span><br></pre></td></tr></table></figure>
 
@@ -656,7 +656,7 @@
 <ul>
 <li>下图高亮表示格式化成功；</li>
 </ul>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20201019211525368.png" alt="image-20201019211525368"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20201019211525368.png" alt="image-20201019211525368"></p>
 <h5 id="第八步：集群启动"><a href="#第八步：集群启动" class="headerlink" title="第八步：集群启动"></a>第八步：集群启动</h5><ul>
 <li>启动集群有两种方式：<ul>
 <li>①脚本一键启动；</li>
@@ -764,7 +764,7 @@
 </ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcall jps</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200513122314381.png" alt="image-20200513122314381"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200513122314381.png" alt="image-20200513122314381"></p>
 <h6 id="3-运行一个mr例子"><a href="#3-运行一个mr例子" class="headerlink" title="3. 运行一个mr例子"></a>3. 运行一个mr例子</h6><ul>
 <li>任一节点运行pi例子</li>
 </ul>
@@ -773,7 +773,7 @@
 <ul>
 <li>最后计算出pi的近似值</li>
 </ul>
-<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/assets/image-20200522154422389.png" alt="image-20200522154422389"></p>
+<p><img src="/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/image-20200522154422389.png" alt="image-20200522154422389"></p>
 <p>==提醒：如果要关闭电脑时，清一定要按照以下顺序操作，否则集群可能会出问题==</p>
 <ul>
 <li><p>关闭hadoop集群</p>
