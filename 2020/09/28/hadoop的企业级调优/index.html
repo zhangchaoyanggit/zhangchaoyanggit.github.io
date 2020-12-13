@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="好记性不如烂笔头" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    hadoop的企业级调优 |  奋斗的皮皮虾
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/images/avatar.jpg" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="奋斗的皮皮虾" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-hadoop的企业级调优"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  hadoop的企业级调优
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/09/28/hadoop%E7%9A%84%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%B0%83%E4%BC%98/" class="article-date">
+  <time datetime="2020-09-28T13:22:11.000Z" itemprop="datePublished">2020-09-28</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">11 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="hadoop的企业级调优"><a href="#hadoop的企业级调优" class="headerlink" title="hadoop的企业级调优"></a>hadoop的企业级调优</h1><h1 id="一、课前准备"><a href="#一、课前准备" class="headerlink" title="一、课前准备"></a>一、课前准备</h1><ol>
+<li>搭建好三个节点的hadoop集群</li>
+</ol>
+<h1 id="二、课堂主题"><a href="#二、课堂主题" class="headerlink" title="二、课堂主题"></a>二、课堂主题</h1><ol>
+<li>hadoop的企业级调优</li>
+</ol>
+<h1 id="三、课堂目标"><a href="#三、课堂目标" class="headerlink" title="三、课堂目标"></a>三、课堂目标</h1><ol>
+<li>掌握hdfs调优</li>
+<li>掌握yarn调优</li>
+<li>掌握mapreduce调优方法</li>
+<li>hdfs小文件解决方案</li>
+</ol>
+<h1 id="四、知识要点"><a href="#四、知识要点" class="headerlink" title="四、知识要点"></a>四、知识要点</h1><h2 id="1-hdfs调优以及yarn参数调优"><a href="#1-hdfs调优以及yarn参数调优" class="headerlink" title="1. hdfs调优以及yarn参数调优"></a>1. hdfs调优以及yarn参数调优</h2><h3 id="1-HDFS参数调优hdfs-site-xml"><a href="#1-HDFS参数调优hdfs-site-xml" class="headerlink" title="1. HDFS参数调优hdfs-site.xml"></a>1. HDFS参数调优hdfs-site.xml</h3><ul>
+<li><p>dfs.namenode.handler.count=20 * log2(Cluster Size)</p>
+<p>调整namenode处理客户端的线程数</p>
+<p>比如集群规模为8台时，此参数设置为60</p>
+<p>The number of Namenode RPC server threads that listen to requests from clients. If dfs.namenode.servicerpc-address is not configured then Namenode RPC server threads listen to requests from all nodes.</p>
+<p>NameNode有一个工作线程池，用来处理不同DataNode的并发心跳以及客户端并发的元数据操作。对于大集群或者有大量客户端的集群来说，通常需要增大参数dfs.namenode.handler.count的默认值10。设置该值的一般原则是将其设置为集群大小的自然对数乘以20，即20logN，N为集群大小。</p>
+</li>
+<li><p>编辑日志存储路径dfs.namenode.edits.dir设置与镜像文件存储路径dfs.namenode.name.dir尽量分开，达到最低写入延迟</p>
+</li>
+<li><p>元数据信息fsimage多目录冗余存储配置</p>
+</li>
+</ul>
+<h3 id="2-YARN参数调优yarn-site-xml"><a href="#2-YARN参数调优yarn-site-xml" class="headerlink" title="2. YARN参数调优yarn-site.xml"></a>2. YARN参数调优yarn-site.xml</h3><ul>
+<li><p>根据实际调整每个节点和单个任务申请内存值</p>
+<ul>
+<li><p>yarn.nodemanager.resource.memory-mb</p>
+<p>表示该节点上YARN可使用的物理内存总量，默认是8192（MB），注意，如果你的节点内存资源不够8GB，则需要调减小这个值，而YARN不会智能的探测节点的物理内存总量。</p>
+</li>
+<li><p>yarn.scheduler.maximum-allocation-mb</p>
+<p>单个任务可申请的最多物理内存量，默认是8192（MB）。</p>
+</li>
+</ul>
+</li>
+<li><p>Hadoop宕机</p>
+<ul>
+<li>如果MR造成系统宕机。此时要控制Yarn同时运行的任务数，和每个任务申请的最大内存。调整参数：yarn.scheduler.maximum-allocation-mb（单个任务可申请的最多物理内存量，默认是8192MB）</li>
+<li>如果写入文件过量造成NameNode宕机。那么调高Kafka的存储大小，控制从Kafka到HDFS的写入速度。高峰期的时候用Kafka进行缓存，高峰期过去数据同步会自动跟上。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-mapreduce运行慢的主要原因可能有哪些"><a href="#2-mapreduce运行慢的主要原因可能有哪些" class="headerlink" title="2. mapreduce运行慢的主要原因可能有哪些"></a>2. mapreduce运行慢的主要原因可能有哪些</h2><ul>
+<li><p>MapReduce程序效率的瓶颈在于两点：</p>
+</li>
+<li><p>一、计算机性能</p>
+<p>CPU、内存、磁盘健康、网络</p>
+</li>
+<li><p>二、I/O操作优化</p>
+<ol>
+<li>数据倾斜</li>
+<li>map和reduce数设置不合理</li>
+<li>map运行时间太长，导致reduce等待过久</li>
+<li>小文件过多</li>
+<li>大量的不可分割的超大文件</li>
+<li>spill次数过多</li>
+<li>merge次数过多</li>
+</ol>
+</li>
+</ul>
+<h2 id="3-mapreduce的优化方法"><a href="#3-mapreduce的优化方法" class="headerlink" title="3. mapreduce的优化方法"></a>3. mapreduce的优化方法</h2><ul>
+<li>MapReduce优化方法主要从六个方面考虑：数据输入、Map阶段、Reduce阶段、IO传输、数据倾斜问题和常用的调优参数。</li>
+</ul>
+<h3 id="1-数据输入阶段"><a href="#1-数据输入阶段" class="headerlink" title="1. 数据输入阶段"></a>1. 数据输入阶段</h3><ul>
+<li>合并小文件：在执行mr任务前将小文件进行合并；因为大量的小文件会产生大量的map任务，任务都需要初始化，从而导致mr运行缓慢</li>
+<li>采用CombineTextInputFormat来作为输入，解决输入端大量小文件场景。</li>
+</ul>
+<h3 id="2-MapTask运行阶段"><a href="#2-MapTask运行阶段" class="headerlink" title="2. MapTask运行阶段"></a>2. MapTask运行阶段</h3><ul>
+<li><strong>减少spill溢写次数</strong>：通过调整mapreduce.task.io.sort.mb及mapreduce.map.sort.spill.percent参数的值，增大触发spill的内存上限，减少spill次数，从而减少磁盘io的次数</li>
+<li><strong>减少merge合并次数</strong>：调整mapreduce.task.io.sort.factor参数，增大merge的文件数，减少merge的次数，从而缩短mr处理时间</li>
+<li>在map之后，不影响业务逻辑的情况下，先进行combine处理，减少I/O</li>
+</ul>
+<h3 id="3-ReduceTask运行阶段"><a href="#3-ReduceTask运行阶段" class="headerlink" title="3. ReduceTask运行阶段"></a>3. ReduceTask运行阶段</h3><ul>
+<li><strong>设置合理的map、reduce个数</strong>：两个数值都不能太小，也不能太大；<ul>
+<li>太少，导致task执行时长边长；</li>
+<li>太多，导致map、reduce任务间竞争资源，造成处理超时错误。</li>
+</ul>
+</li>
+<li><strong>设置map、reduce共存</strong>：<ul>
+<li>调整mapreduce.job.reduce.slowstart.completedmaps参数(默认0.05)，是map运行到一定程度后，reduce也开始运行，减少reduce的等待时间</li>
+<li>比如调到0.8</li>
+</ul>
+</li>
+<li><strong>规避使用reduce</strong>：<ul>
+<li>因为reduce在用于连接数据集的时候会产生大量的网络消耗</li>
+</ul>
+</li>
+<li><strong>合理设置reduce端的buffer</strong>：<ul>
+<li>默认情况下，数据达到一定阈值的时候，Buffer中的数据会写入磁盘，然后reduce会从磁盘中获得所有的数据。即Buffer与reduce没有关联的，中间多次写磁盘、读磁盘的过程。那么可以通过调整参数，使得Buffer中的数据可以直接输送到reduce，从而减少I/O开销；mapreduce.reduce.input.buffer.percent默认为0.0，当值大于0的时候，会保留指定比例的内存读Buffer中的数值直接拿给Reducer使用。这样一来，设置Buffer需要内存，读取数据需要内存，Reduce计算也需要内存，所以要根据作业的运行情况进行调整。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-IO传输阶段"><a href="#4-IO传输阶段" class="headerlink" title="4. IO传输阶段"></a>4. IO传输阶段</h3><ul>
+<li><strong>进行数据压缩</strong>：<ul>
+<li>减少网络I/O的数据量，安装snappy和lzo压缩编码器</li>
+</ul>
+</li>
+<li>使用SequenceFile二进制文件</li>
+</ul>
+<h3 id="5-数据倾斜问题"><a href="#5-数据倾斜问题" class="headerlink" title="5. 数据倾斜问题"></a>5. 数据倾斜问题</h3><ul>
+<li><p>数据倾斜现象：</p>
+<ul>
+<li>数据频率倾斜– 某一分区的数据量要远远大于其他分区</li>
+<li>数据大小倾斜– 部分记录的大小远远大于平均值</li>
+</ul>
+</li>
+<li><p>减少数据倾斜的方法</p>
+<ul>
+<li><p>方法1：抽样和范围分区</p>
+<p>对原始数据进行抽样，根据抽样数据集，预设分区边界值</p>
+</li>
+<li><p>方法2：自定义分区</p>
+<p>基于map输出key的背景知识，进行自定义分区。</p>
+<p>例如，如果map输出键的单词来源于一本书，且其中某些专业词汇出现的次数比较多，那么就可以自定义分区将这些专业词汇发送给固定的若干reduce任务。而将其他的都发送个剩余的reduce任务</p>
+</li>
+<li><p>方法3：Combine</p>
+<p>使用combine减少数据倾斜。在可能的情况下，Combine的目的是聚合并精简数据</p>
+</li>
+<li><p>方法4：采用Map Join，尽量避免Reduce Join</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-常用的调优参数"><a href="#6-常用的调优参数" class="headerlink" title="6. 常用的调优参数"></a>6. 常用的调优参数</h3><ul>
+<li>资源相关参数</li>
+</ul>
+<h4 id="1-mapred-site-xml"><a href="#1-mapred-site-xml" class="headerlink" title="1. mapred-site.xml"></a>1. mapred-site.xml</h4><ul>
+<li>以下参数是在用户自己的MR应用程序中配置就可以生效（mapred-default.xml）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>配置参数</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mapreduce.map.memory.mb</td>
+<td>一个MapTask可使用的资源上限（单位:MB），默认为1024。如果MapTask实际使用的资源量超过该值，则会被强制杀死。</td>
+</tr>
+<tr>
+<td>mapreduce.reduce.memory.mb</td>
+<td>一个ReduceTask可使用的资源上限（单位:MB），默认为1024。如果ReduceTask实际使用的资源量超过该值，则会被强制杀死。</td>
+</tr>
+<tr>
+<td>mapreduce.map.cpu.vcores</td>
+<td>每个MapTask可使用的最多cpu core数目，默认值: 1</td>
+</tr>
+<tr>
+<td>mapreduce.reduce.cpu.vcores</td>
+<td>每个ReduceTask可使用的最多cpu core数目，默认值: 1</td>
+</tr>
+<tr>
+<td>mapreduce.reduce.shuffle.parallelcopies</td>
+<td>每个Reduce去Map中取数据的并行数。默认值是5</td>
+</tr>
+<tr>
+<td>mapreduce.reduce.shuffle.merge.percent</td>
+<td>Buffer中的数据达到多少比例开始写入磁盘。默认值0.66</td>
+</tr>
+<tr>
+<td>mapreduce.reduce.shuffle.input.buffer.percent</td>
+<td>Buffer大小占Reduce可用内存的比例。默认值0.7</td>
+</tr>
+<tr>
+<td>mapreduce.reduce.input.buffer.percent</td>
+<td>指定多少比例的内存用来存放Buffer中的数据，默认值是0.0</td>
+</tr>
+</tbody></table>
+<ul>
+<li>应该在YARN启动之前就配置在服务器的配置文件中才能生效（yarn-default.xml）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>配置参数</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>yarn.scheduler.minimum-allocation-mb</td>
+<td>给应用程序Container分配的最小内存，默认值：1024</td>
+</tr>
+<tr>
+<td>yarn.scheduler.maximum-allocation-mb</td>
+<td>给应用程序Container分配的最大内存，默认值：8192</td>
+</tr>
+<tr>
+<td>yarn.scheduler.minimum-allocation-vcores</td>
+<td>每个Container申请的最小CPU核数，默认值：1</td>
+</tr>
+<tr>
+<td>yarn.scheduler.maximum-allocation-vcores</td>
+<td>每个Container申请的最大CPU核数，默认值：32</td>
+</tr>
+<tr>
+<td>yarn.nodemanager.resource.memory-mb</td>
+<td>给Containers分配的最大物理内存，默认值：8192</td>
+</tr>
+</tbody></table>
+<ul>
+<li>Shuffle性能优化的关键参数，应在YARN启动之前就配置好（mapred-default.xml）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>配置参数</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mapreduce.task.io.sort.mb</td>
+<td>Shuffle的环形缓冲区大小，默认100m</td>
+</tr>
+<tr>
+<td>mapreduce.map.sort.spill.percent</td>
+<td>环形缓冲区溢出的阈值，默认80%</td>
+</tr>
+</tbody></table>
+<h4 id="2-容错相关参数-MapReduce性能优化"><a href="#2-容错相关参数-MapReduce性能优化" class="headerlink" title="2. 容错相关参数(MapReduce性能优化)"></a>2. 容错相关参数(MapReduce性能优化)</h4><table>
+<thead>
+<tr>
+<th>配置参数</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mapreduce.map.maxattempts</td>
+<td>每个Map Task最大重试次数，一旦重试参数超过该值，则认为Map Task运行失败，默认值：4。</td>
+</tr>
+<tr>
+<td>mapreduce.reduce.maxattempts</td>
+<td>每个Reduce Task最大重试次数，一旦重试参数超过该值，则认为Map Task运行失败，默认值：4。</td>
+</tr>
+<tr>
+<td>mapreduce.task.timeout</td>
+<td>Task超时时间，经常需要设置的一个参数，该参数表达的意思为：如果一个Task在一定时间内没有任何进入，即不会读取新的数据，也没有输出数据，则认为该Task处于Block状态，可能是卡住了，也许永远会卡住，为了防止因为用户程序永远Block住不退出，则强制设置了一个该超时时间（单位毫秒），默认是600000。如果你的程序对每条输入数据的处理时间过长（比如会访问数据库，通过网络拉取数据等），建议将该参数调大，该参数过小常出现的错误提示是“AttemptID:attempt_14267829456721_123456_m_000224_0  Timed out after 300 secsContainer killed by the ApplicationMaster.”。</td>
+</tr>
+</tbody></table>
+<h2 id="4-hdfs小文件解决方案总结"><a href="#4-hdfs小文件解决方案总结" class="headerlink" title="4. hdfs小文件解决方案总结"></a>4. hdfs小文件解决方案总结</h2><h3 id="1-小文件的问题弊端"><a href="#1-小文件的问题弊端" class="headerlink" title="1. 小文件的问题弊端"></a>1. 小文件的问题弊端</h3><ul>
+<li>HDFS上每个文件都要在NameNode上建立一个索引，这个索引的大小约为150byte，这样当小文件比较多的时候，就会产生很多的索引文件</li>
+<li>一方面会大量占用NameNode的内存空间，另一方面就是索引文件过大使得索引速度变慢。</li>
+</ul>
+<h3 id="2-小文件的解决方案"><a href="#2-小文件的解决方案" class="headerlink" title="2. 小文件的解决方案"></a>2. 小文件的解决方案</h3><ul>
+<li><p>优化方式：</p>
+<p>方式一：在数据采集的时候，就将小文件或小批数据合成大文件再上传HDFS。</p>
+<p>方式二：在业务处理之前，在HDFS上使用MapReduce程序对小文件进行合并。</p>
+<p>方式三：在MapReduce处理时，可采用CombineTextInputFormat提高效率。</p>
+</li>
+<li><p>归档命令：hadoop archive</p>
+<p>高效的将小文件进行归档的工具，能将多个小文件打包成一个HAR文件，这样就减少了NameNode的内存使用</p>
+</li>
+<li><p>利用sequence file作为小文件的容器</p>
+<p>Sequence File由一系列的二进制的key/value组成，如果key为文件名，value为文件内容，则可以将大量小文件合并到一个SequenceFile文件中</p>
+</li>
+<li><p>CombineFileInputFormat</p>
+<p>CombineFileInputFormat用于将多个文件合并成一个单独的split，并且会考虑数据的存储位置。</p>
+</li>
+<li><p>开启jvm重用</p>
+<p>对于处理大量小文件的job，可以开启jvm重用，约减少40%的运行时间</p>
+<p>jvm重用原理：一个map运行在一个jvm上，开启重用的话，该map在jvm上运行完毕后，此jvm中会继续运行此job的其他map任务</p>
+<p>具体设置：mapreduce.job.jvm.numtasks值在10到20之间</p>
+</li>
+</ul>
+<h2 id="五、操作系统"><a href="#五、操作系统" class="headerlink" title="五、操作系统"></a>五、操作系统</h2><h3 id="内核参数"><a href="#内核参数" class="headerlink" title="内核参数"></a>内核参数</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">fs.file-mx</span>=<span class="string">6815744   文件描述符总数</span></span><br><span class="line"><span class="meta">fs.aio-max-nr</span>=<span class="string">1048576  最大并发io请求数</span></span><br><span class="line"><span class="meta">net.core.rmem_default</span>=<span class="string">262144   操作系统接受缓冲区的默认大小</span></span><br><span class="line"><span class="meta">net.core.wmeme_default</span>=<span class="string">262144  操作系统发送缓冲区的默认大小</span></span><br><span class="line"><span class="meta">net.core.rmem_max</span>=<span class="string">16777216     系统接收缓冲区最大值</span></span><br><span class="line"><span class="meta">net.core.wmem_max</span>=<span class="string">16777216     系统发送缓冲区最大值</span></span><br><span class="line"><span class="meta">net.ipv4.tcp_rmem</span>=<span class="string">4096 262144 16777216   接收窗口尺寸的最小、默认、最大值</span></span><br><span class="line"><span class="meta">net.ipv4.tcp_wmem</span>=<span class="string">4096 262144 16777216   发送窗口尺寸的最小、默认、最大值</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="增加文件限制"><a href="#增加文件限制" class="headerlink" title="增加文件限制"></a>增加文件限制</h3><h4 id="查看限制"><a href="#查看限制" class="headerlink" title="查看限制"></a>查看限制</h4><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#软限制</span></span><br><span class="line"><span class="attr">ulimit</span> <span class="string">-Sn</span></span><br><span class="line"><span class="comment">#硬限制</span></span><br><span class="line"><span class="attr">ulimit</span> <span class="string">-Hn</span></span><br><span class="line"><span class="comment">#建议调高至少到4096</span></span><br><span class="line"><span class="comment">#修改/etc/security/limits.conf</span></span><br><span class="line"><span class="attr">Soft</span> <span class="string">nofile 4096</span></span><br><span class="line"><span class="attr">Hard</span> <span class="string">nofile 4096</span></span><br><span class="line"><span class="comment">#修改后，命令动态加载新设置</span></span><br><span class="line"><span class="attr">sysctl</span> <span class="string">-p</span></span><br><span class="line"><span class="attr">sysctl</span> <span class="string">-a</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试磁盘速度"><a href="#测试磁盘速度" class="headerlink" title="测试磁盘速度"></a>测试磁盘速度</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#检查服务器的bios设置</span></span><br><span class="line"><span class="comment">	#不启用磁盘驱动器的IDE仿真等功能，保证BIOS性能最佳</span></span><br><span class="line">	</span><br><span class="line"><span class="comment">#网卡绑定</span></span><br><span class="line"><span class="comment">	#为了提高吞吐量和弹性，执行NIC绑定来组合网络接口</span></span><br><span class="line"><span class="comment">#禁用swap</span></span><br><span class="line">	<span class="attr">服务器不应该swap，尤其是datanode</span></span><br><span class="line">	<span class="meta">禁用：swapoff</span> <span class="string">-a</span></span><br><span class="line">	<span class="meta">查看：swapon</span> <span class="string">-s</span></span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://chaoyang66.gitee.io/2020/09/28/hadoop%E7%9A%84%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%B0%83%E4%BC%98/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/" rel="tag">hadoop</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/09/28/Hadoop3.x%E6%96%B0%E7%89%B9%E6%80%A7/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            hadoop3.x新特性
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/09/27/MapReduce%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">MapReduce分布式计算模型</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "SctsT8yefP0D7VSA3skojjQJ-gzGzoHsz",
+    app_key: "m5U9PA8tUiK3NJFScBqsQ8pg",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2019-2020
+        <i class="ri-heart-fill heart_icon"></i> 张朝阳
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src=''></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/avatar.jpg" alt="奋斗的皮皮虾"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechatpay.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Subtitle -->
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="86"
+        src="//music.163.com/outchain/player?type=2&id=37653063&auto=1&height=66"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

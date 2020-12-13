@@ -116,13 +116,13 @@
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(</span><br><span class="line">    id     bigint  not null comment &#39;id&#39; primary key,</span><br><span class="line">    name   varchar(200) null comment &#39;name&#39;,</span><br><span class="line">    age    bigint       null comment &#39;age&#39;,</span><br><span class="line">    gender int          null comment &#39;gender&#39;,</span><br><span class="line">    key (name)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
 <h3 id="1-索引是什么及工作机制？"><a href="#1-索引是什么及工作机制？" class="headerlink" title="1. 索引是什么及工作机制？"></a>1. 索引是什么及工作机制？</h3><p>索引是为了加速对表中数据行的检索而创建的一种分散存储的数据结构。其工作机制如下图：</p>
-<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/image-20200706214830530.png" alt="image-20200706214830530"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images/image-20200706214830530.png" alt="image-20200706214830530"></p>
 <p>上图中，如果现在有一条sql语句 <font color="red">select * from user where id = 40</font>，如果没有索引的条件下，我们要找到这条记录，我们就需要在数据中进行全表扫描，匹配id = 13的数据。</p>
 <p>如果有了索引，我们就可以通过索引进行快速查找，如上图中，可以先在索引中通过id = 40进行二分查找，再根据定位到的地址取出对应的行数据。</p>
 <h3 id="2-MySQL数据库为什么要使用B-TREE作为索引的数据结构？"><a href="#2-MySQL数据库为什么要使用B-TREE作为索引的数据结构？" class="headerlink" title="2. MySQL数据库为什么要使用B+TREE作为索引的数据结构？"></a>2. MySQL数据库为什么要使用B+TREE作为索引的数据结构？</h3><h4 id="2-1-二叉树为什么不可行"><a href="#2-1-二叉树为什么不可行" class="headerlink" title="2.1 二叉树为什么不可行"></a>2.1 二叉树为什么不可行</h4><p>对数据的加速检索，首先想到的就是二叉树，二叉树的查找时间复杂度可以达到O(log2(n))。下面看一下二叉树的存储结构：</p>
-<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/image-20200706215221898.png" alt="image-20200706215221898"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images/image-20200706215221898.png" alt="image-20200706215221898"></p>
 <p>二叉树搜索相当于一个二分查找。二叉查找能大大提升查询的效率，但是它有一个问题：二叉树以第一个插入的数据作为根节点，如上图中，如果只看右侧，就会发现，就是一个线性链表结构。如果我们现在的数据只包含1, 2, 3, 4，就会出现以下情况：</p>
-<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/image-20200706215501638.png" alt="image-20200706215501638"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images/image-20200706215501638.png" alt="image-20200706215501638"></p>
 <p>如果我们要查询的数据为4，则需要遍历所有的节点才能找到4，即，相当于全表扫描，就是由于存在这种问题，所以二叉查找树不适合用于作为索引的数据结构。</p>
 <h4 id="2-2-平衡二叉树为什么不可行"><a href="#2-2-平衡二叉树为什么不可行" class="headerlink" title="2.2 平衡二叉树为什么不可行"></a>2.2 平衡二叉树为什么不可行</h4><p>为了解决二叉树存在线性链表的问题，会想到用平衡二叉查找树来解决。下面看看平衡二叉树是怎样的：</p>
 <p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images%5C20200516171035521.png" alt="20200516171035521"></p>
@@ -152,7 +152,7 @@
 </ol>
 <p>那有没有一种结构能够解决二叉树的这种问题呢？有，那就是多路平衡查找树。</p>
 <h4 id="2-3-多路平衡查找树-Balance-Tree"><a href="#2-3-多路平衡查找树-Balance-Tree" class="headerlink" title="2.3 多路平衡查找树(Balance Tree)"></a>2.3 多路平衡查找树(Balance Tree)</h4><p>B Tree 是一个绝对平衡树，所有的叶子节点在同一高度，如下图所示：</p>
-<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/image-20200706220452966.png" alt="image-20200706220452966"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images/image-20200706220452966.png" alt="image-20200706220452966"></p>
 <p>上图为一个2-3树（每个节点存储2个关键字，有3路），多路平衡查找树也就是多叉的意思，从上图中可以看出，每个节点保存的关键字的个数和路数关系为：关键字个数 = 路数 – 1。</p>
 <p>假设要从上图中查找id = X的数据，B TREE 搜索过程如下：</p>
 <ol>
@@ -165,7 +165,7 @@
 <p>这里顺便说一下：在B Tree保证树的平衡的过程中，每次关键字的变化，都会导致结构发生很大的变化，这个过程是特别浪费时间的，所以创建索引一定要创建合适的索引，而不是把所有的字段都创建索引，创建冗余索引只会在对数据进行新增，删除，修改时增加性能消耗。</p>
 <p>B树确实已经很好的解决了问题，我先这里先继续看一下B+Tree结构，再来讨论BTree和B+Tree的区别。</p>
 <p>先看看B+Tree是怎样的，B+Tree是B Tree的一个变种，在B+Tree中，B树的路数和关键字的个数的关系不再成立了，数据检索规则采用的是左闭合区间，路数和关键个数关系为1比1，具体如下图所示：</p>
-<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/image-20200706215900185.png" alt="image-20200706215900185"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images/image-20200706215900185.png" alt="image-20200706215900185"></p>
 <p>如果上图中是用ID做的索引，如果是搜索X = 1的数据，搜索规则如下：</p>
 <ol>
 <li>取出根磁盘块，加载1，28，66三个关键字。</li>
@@ -222,7 +222,7 @@
 <p>所以通过辅助索引进行检索，需要检索两次索引。</p>
 <p>之所以这样设计，一个原因就是：如果和MyISAM一样在主键索引和辅助索引的叶子节点中都存放数据行指针，一旦数据发生迁移，则需要去重新组织维护所有的索引。</p>
 <p>把Innodb 和 MYISAM区别放在一张图中看，就如下所示：</p>
-<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/image-20200706221942425.png" alt="image-20200706221942425"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images/image-20200706221942425.png" alt="image-20200706221942425"></p>
 <h4 id="3-3-B-Tree在InnerDB存储引擎中可以存多少条记录？"><a href="#3-3-B-Tree在InnerDB存储引擎中可以存多少条记录？" class="headerlink" title="3.3 B+Tree在InnerDB存储引擎中可以存多少条记录？"></a>3.3 B+Tree在InnerDB存储引擎中可以存多少条记录？</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innodb_page_size &#x3D; 16384b &#x2F;1024b &#x3D; 16kb</span><br></pre></td></tr></table></figure>
 
 <p>  我们先假设B+树高为2，即存在一个根节点和若干个叶子节点，那么这棵B+树的存放总记录数为：根节点指针数单个叶子节点记录行数。<br>上文我们已经说明单个叶子节点（页）中的记录数=16K/1K=16。（这里假设一行记录的数据大小为1k，实际上现在很多互联网业务数据记录大小通常就是1K左右）。<br>        那么现在我们需要计算出非叶子节点能存放多少指针？<br>        其实这也很好算，我们假设主键ID为bigint类型，长度为8字节，而指针大小在InnoDB源码中设置为6字节，这样一共14字节，我们一个页中能存放多少这样的单元，其实就代表有多少指针，即16384/14=1170。那么可以算出一棵高度为2的B+树，能存放117016=18720条这样的数据记录。<br>        根据同样的原理我们可以算出一个高度为3的B+树可以存放：1170117016=21902400条这样的记录。<br>所以在InnoDB中B+树高度一般为1-3层，它就能满足千万级的数据存储。在查找数据时一次页的查找代表一次IO，所以通过主键索引查询通常只需要1-3次IO操作即可查找到数据。</p>
@@ -232,7 +232,7 @@
 
 <p><strong>为什么说离散型越高，选择型越好？</strong><br>        因为离散度越高，通过索引最终确定的范围越小，最终扫面的行数也就越少。</p>
 <h4 id="4-2-最左匹配原则"><a href="#4-2-最左匹配原则" class="headerlink" title="4.2 最左匹配原则"></a>4.2 最左匹配原则</h4><p>对于索引中的关键字进行对比的时候，一定是从左往右以此对比，且不可跳过。之前讲解的id都为int型数据，如果id为字符串的时候，如下图：</p>
-<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/image-20200706222219613.png" alt="image-20200706222219613"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images/image-20200706222219613.png" alt="image-20200706222219613"></p>
 <p>当进行匹配的时候，会把字符串转换成ascll码，如abc变成97 98 99，然后从左往右一个字符一个字符进行对比。所以在sql查询中使用like %a 时候索引会失效，因为%表示全匹配，如果已经全匹配就不需要索引，还不如直接全表扫描。</p>
 <h4 id="4-3-最少空间原则"><a href="#4-3-最少空间原则" class="headerlink" title="4.3 最少空间原则"></a>4.3 最少空间原则</h4><p>前面已经说过，当关键字占用的空间越小，则每个节点保存的关键字个数就越多，每次加载进内存的关键字个数就越多，检索效率就越高。创建索引的关键字要尽可能占用空间小。</p>
 <h3 id="5-联合索引"><a href="#5-联合索引" class="headerlink" title="5. 联合索引"></a>5. 联合索引</h3><ul>
@@ -258,7 +258,7 @@
 
 <p>在上面解决方案中，根据最左匹配原则，idx_name为冗余索引， where name = ?同样可以利用索引idx_name_age进行检索。冗余索引会增加维护B+TREE平衡时的性能消耗，并且占用磁盘空间。</p>
 <h3 id="6-覆盖索引"><a href="#6-覆盖索引" class="headerlink" title="6. 覆盖索引"></a>6. 覆盖索引</h3><p>如果查询的列，通过索引项的信息可直接返回，则该索引称之为查询SQL的覆盖索引。覆盖索引可以提高查询的效率。</p>
-<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/image-20200706222804341.png" alt="image-20200706222804341"></p>
+<p><img src="/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/images/image-20200706222804341.png" alt="image-20200706222804341"></p>
 <p>如上图，如果通过name进行数据检索：<br><font color="red">select * from users where name = ?</font><br>需要需要在name索引中找到name对应的Id，然后通过获取的Id在主键索引中查到对应的行。整个过程需要扫描两次索引，一次name，一次id。</p>
 <p>如果我们查询只想查询id的值，就可以改写SQL为：<br><font color="red">select id from users where name = ?</font><br>因为只需要id的值，通过name查询的时候，扫描完name索引，我们就能够获得id的值了，所以就不需要再去扫面id索引，就会直接返回。</p>
 <p>当然，如果你同时需要获取age的值：<br>&lt;<font color="red">select id，age from users where name = ?</font><br>这样就无法使用到覆盖索引了。</p>
@@ -363,11 +363,11 @@
    
   <nav class="article-nav">
     
-      <a href="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/" class="article-nav-link">
+      <a href="/2020/09/25/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            CentOS 7安装MySQL5.7版本
+            大数据课程课前环境准备
           
         </div>
       </a>

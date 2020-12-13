@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="好记性不如烂笔头" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Hive数据仓库操作命令 |  奋斗的皮皮虾
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/images/avatar.jpg" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="奋斗的皮皮虾" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Hive数据仓库操作命令"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Hive数据仓库操作命令
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/10/14/Hive%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/" class="article-date">
+  <time datetime="2020-10-14T14:23:11.000Z" itemprop="datePublished">2020-10-14</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">4.3k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">18 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="Hive数据仓库操作命令"><a href="#Hive数据仓库操作命令" class="headerlink" title="Hive数据仓库操作命令"></a>Hive数据仓库操作命令</h1><h2 id="一、课前准备"><a href="#一、课前准备" class="headerlink" title="一、课前准备"></a>一、课前准备</h2><ol>
+<li><p>3节点Hadoop集群</p>
+</li>
+<li><p>已安装Hive</p>
+</li>
+</ol>
+<h2 id="二、课堂主题"><a href="#二、课堂主题" class="headerlink" title="二、课堂主题"></a>二、课堂主题</h2><p>本堂课主要围绕hive的DDL操作和DML操作进行讲解。主要包括以下几个方面</p>
+<ol>
+<li><p>对Hive表的DDL和DML操作</p>
+</li>
+<li><p>Hive表数据导入和数据导出方式</p>
+</li>
+</ol>
+<h2 id="三、课堂目标"><a href="#三、课堂目标" class="headerlink" title="三、课堂目标"></a>三、课堂目标</h2><ol>
+<li><p>掌握Hive数据导入</p>
+</li>
+<li><p>掌握Hive数据导出</p>
+</li>
+<li><p>掌握Hive的静态分区和动态分区</p>
+</li>
+<li><p>理解Hive中的分桶表作用</p>
+</li>
+</ol>
+<h2 id="四、知识要点"><a href="#四、知识要点" class="headerlink" title="四、知识要点"></a>四、知识要点</h2><h3 id="1-Hive的分桶表"><a href="#1-Hive的分桶表" class="headerlink" title="1. Hive的分桶表"></a>1. Hive的分桶表</h3><p><img src="/2020/10/14/Hive%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/assets/2019-07-16_17-01-51.png" alt></p>
+<h4 id="1-1-分桶表原理"><a href="#1-1-分桶表原理" class="headerlink" title="1.1 分桶表原理"></a>1.1 分桶表原理</h4><ul>
+<li><p>分桶是相对分区进行更细粒度的划分</p>
+<ul>
+<li><p>Hive表或分区表可进一步的分桶</p>
+</li>
+<li><p>==分桶将整个数据内容按照某列取hash值，对桶的个数取模的方式决定该条记录存放在哪个桶当中；具有相同hash值的数据进入到同一个文件中==</p>
+</li>
+<li><p>比如按照name属性分为3个桶，就是对name属性值的hash值对3取摸，按照取模结果对数据分桶。</p>
+<ul>
+<li><p>取模结果为==0==的数据记录存放到一个文件</p>
+</li>
+<li><p>取模结果为==1==的数据记录存放到一个文件</p>
+</li>
+<li><p>取模结果为==2==的数据记录存放到一个文件</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-2-作用"><a href="#1-2-作用" class="headerlink" title="1.2 作用"></a>1.2 作用</h4><ul>
+<li><p>1、取样sampling更高效。没有分桶的话需要扫描整个数据集。</p>
+</li>
+<li><p>2、提升某些查询操作效率，例如map side join</p>
+</li>
+</ul>
+<h4 id="1-3-案例演示：创建分桶表"><a href="#1-3-案例演示：创建分桶表" class="headerlink" title="1.3 案例演示：创建分桶表"></a>1.3 案例演示：创建分桶表</h4><ul>
+<li><p>在创建分桶表之前要执行的命令</p>
+</li>
+<li><p>==set hive.enforce.bucketing=true;==  开启对分桶表的支持</p>
+</li>
+<li><p>==set mapreduce.job.reduces=4;==      设置与桶相同的reduce个数（默认只有一个reduce）</p>
+</li>
+<li><p>进入hive客户端然后执行以下命令</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> myhive;</span><br><span class="line"><span class="keyword">set</span> hive.enforce.bucketing=<span class="literal">true</span>; </span><br><span class="line"><span class="keyword">set</span> mapreduce.job.reduces=<span class="number">4</span>;  </span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建分桶表</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> myhive.user_buckets_demo(<span class="keyword">id</span> <span class="built_in">int</span>, <span class="keyword">name</span> <span class="keyword">string</span>)</span><br><span class="line">clustered <span class="keyword">by</span>(<span class="keyword">id</span>) </span><br><span class="line"><span class="keyword">into</span> <span class="number">4</span> buckets </span><br><span class="line"><span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建普通表</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> user_demo(<span class="keyword">id</span> <span class="built_in">int</span>, <span class="keyword">name</span> <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>准备数据文件 buckets.txt</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#在linux当中执行以下命令</span><br><span class="line">cd &#x2F;kkb&#x2F;install&#x2F;hivedatas&#x2F;</span><br><span class="line">vim user_bucket.txt</span><br><span class="line"></span><br><span class="line">1	anzhulababy1</span><br><span class="line">2	anzhulababy2</span><br><span class="line">3	anzhulababy3</span><br><span class="line">4	anzhulababy4</span><br><span class="line">5	anzhulababy5</span><br><span class="line">6	anzhulababy6</span><br><span class="line">7	anzhulababy7</span><br><span class="line">8	anzhulababy8</span><br><span class="line">9	anzhulababy9</span><br><span class="line">10	anzhulababy10</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>加载数据到普通表 user_demo 中</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">load</span> <span class="keyword">data</span> <span class="keyword">local</span> inpath <span class="string">'/kkb/install/hivedatas/user_bucket.txt'</span>  overwrite <span class="keyword">into</span> <span class="keyword">table</span> user_demo;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>4、加载数据到桶表user_buckets_demo中</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">table</span> user_buckets_demo <span class="keyword">select</span> * <span class="keyword">from</span> user_demo;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>hdfs上查看表的数据目录</li>
+</ul>
+<p><img src="/2020/10/14/Hive%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/assets/2019-07-16_16-30-09.png" alt></p>
+<ul>
+<li>抽样查询桶表的数据<ul>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Sampling" target="_blank" rel="noopener">官网地址</a></li>
+<li>tablesample抽样语句语法：tablesample(bucket  x  out  of  y)<ul>
+<li>x表示从第几个桶开始做数据采样</li>
+</ul>
+</li>
+<li>y与进行采样的桶数的个数、每个采样桶的采样比例有关；</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> user_buckets_demo <span class="keyword">tablesample</span>(<span class="keyword">bucket</span> <span class="number">1</span> <span class="keyword">out</span> <span class="keyword">of</span> <span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">需要采样的总桶数 &#x3D; 分桶数&#x2F;y &#x3D; 结果ret</span><br><span class="line">分两种情况</span><br><span class="line"></span><br><span class="line">情况一：ret&gt;1</span><br><span class="line">需要采样的总桶数 &#x3D; 分桶数&#x2F;y &#x3D; 4&#x2F;2 &#x3D; 2个</span><br><span class="line">即从2个桶进行数据的采样</span><br><span class="line">x &#x3D; 1 先从第1个桶中取出数据</span><br><span class="line">x+y &#x3D; 1+2 &#x3D; 3 再从第3个桶中取出数据</span><br><span class="line"></span><br><span class="line">情况二：ret&lt;1</span><br><span class="line">假设还是此表user_buckets_demo，分桶数是4</span><br><span class="line">x&#x3D;1</span><br><span class="line">y&#x3D;8</span><br><span class="line">∴需要采样的总桶数 &#x3D; 分桶数&#x2F;y &#x3D; 4&#x2F;8 &#x3D; 0.5</span><br><span class="line">ret&lt;1，只能从1个桶进行数据的采样</span><br><span class="line">x &#x3D; 1 从第1个桶中取出0.5一半的数据</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Hive数据导入"><a href="#2-Hive数据导入" class="headerlink" title="2. Hive数据导入"></a>2. Hive数据导入</h3><h4 id="2-1-直接向表中插入数据（强烈不推荐使用）"><a href="#2-1-直接向表中插入数据（强烈不推荐使用）" class="headerlink" title="2.1 直接向表中插入数据（强烈不推荐使用）"></a>2.1 直接向表中插入数据（强烈不推荐使用）</h4>  <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; create table score3 like score;</span><br><span class="line">hive (myhive)&gt; insert into table score3 partition(month ='201807') values ('001','002','100');</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-通过load加载数据（必须掌握）"><a href="#2-2-通过load加载数据（必须掌握）" class="headerlink" title="2.2 通过load加载数据（必须掌握）"></a>2.2 通过load加载数据（必须掌握）</h4><ul>
+<li>语法：</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; load data [local] inpath 'dataPath' [overwrite] into table student [partition (partcol1=val1,…)];</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过load方式加载数据</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; load data local inpath '/kkb/install/hivedatas/score.csv' overwrite into table score partition(month='201806');</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-通过查询加载数据（必须掌握）"><a href="#2-3-通过查询加载数据（必须掌握）" class="headerlink" title="2.3 通过查询加载数据（必须掌握）"></a>2.3 通过查询加载数据（必须掌握）</h4><ul>
+<li>通过查询方式加载数据</li>
+<li>语法；<a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DML#LanguageManualDML-InsertingdataintoHiveTablesfromqueries" target="_blank" rel="noopener">官网地址</a></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> tablename1 [<span class="keyword">PARTITION</span> (partcol1=val1, partcol2=val2 ...) [<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>]] select_statement1 <span class="keyword">FROM</span> from_statement;</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> tablename1 [<span class="keyword">PARTITION</span> (partcol1=val1, partcol2=val2 ...)] select_statement1 <span class="keyword">FROM</span> from_statement;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>例子</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; create table score5 like score;</span><br><span class="line">hive (myhive)&gt; insert overwrite table score5 partition(month = '201806') select s_id,c_id,s_score from score;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-4-查询语句中创建表并加载数据（as-select）"><a href="#2-4-查询语句中创建表并加载数据（as-select）" class="headerlink" title="2.4 查询语句中创建表并加载数据（as select）"></a>2.4 查询语句中创建表并加载数据（as select）</h4><ul>
+<li>将查询的结果保存到一张表当中去</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; create table score6 as select * from score;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-5-创建表时指定location"><a href="#2-5-创建表时指定location" class="headerlink" title="2.5 创建表时指定location"></a>2.5 创建表时指定location</h4><ul>
+<li>创建表，并指定在hdfs上的位置</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; create external table score7 (s_id string,c_id string,s_score int) row format delimited fields terminated by '\t' location '/myscore7';</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>上传数据到hdfs上，我们也可以直接在hive客户端下面通过dfs命令来进行操作hdfs的数据</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; dfs -mkdir -p /myscore7;</span><br><span class="line">hive (myhive)&gt; dfs -put /kkb/install/hivedatas/score.csv /myscore7;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查询数据</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; select * from score7;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-6-export导出与import-导入-hive表数据（内部表操作）"><a href="#2-6-export导出与import-导入-hive表数据（内部表操作）" class="headerlink" title="2.6 export导出与import 导入 hive表数据（内部表操作）"></a>2.6 export导出与import 导入 hive表数据（内部表操作）</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; create table teacher2 like teacher;</span><br><span class="line"><span class="comment">-- 导出到hdfs路径</span></span><br><span class="line">hive (myhive)&gt; export table teacher to  '/kkb/teacher';</span><br><span class="line">hive (myhive)&gt; import table teacher2 from '/kkb/teacher';</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-Hive数据导出"><a href="#3-Hive数据导出" class="headerlink" title="3. Hive数据导出"></a>3. Hive数据导出</h3><h4 id="3-1-insert-导出"><a href="#3-1-insert-导出" class="headerlink" title="3.1 insert 导出"></a>3.1 insert 导出</h4><ul>
+<li>表 -&gt; 文件</li>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DML#LanguageManualDML-Writingdataintothefilesystemfromqueries" target="_blank" rel="noopener">官方文档</a></li>
+<li>语法</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> OVERWRITE [<span class="keyword">LOCAL</span>] <span class="keyword">DIRECTORY</span> directory1</span><br><span class="line">  [<span class="keyword">ROW</span> <span class="keyword">FORMAT</span> row_format] [<span class="keyword">STORED</span> <span class="keyword">AS</span> file_format] (Note: <span class="keyword">Only</span> available <span class="keyword">starting</span> <span class="keyword">with</span> Hive <span class="number">0.11</span><span class="number">.0</span>)</span><br><span class="line">  <span class="keyword">SELECT</span> ... <span class="keyword">FROM</span> ...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将查询的结果导出到本地</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">local</span> <span class="keyword">directory</span> <span class="string">'/kkb/install/hivedatas/stu'</span> <span class="keyword">select</span> * <span class="keyword">from</span> stu;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将查询的结果<strong>格式化</strong>导出到本地</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">local</span> <span class="keyword">directory</span> <span class="string">'/kkb/install/hivedatas/stu2'</span> <span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">','</span> <span class="keyword">select</span> * <span class="keyword">from</span> stu;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将查询的结果导出到HDFS上==(没有local)==</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">directory</span> <span class="string">'/kkb/hivedatas/stu'</span> <span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span>  <span class="string">','</span>  <span class="keyword">select</span> * <span class="keyword">from</span> stu;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-Hive-Shell-命令导出"><a href="#3-2-Hive-Shell-命令导出" class="headerlink" title="3.2  Hive Shell 命令导出"></a>3.2  Hive Shell 命令导出</h4><ul>
+<li><p>基本语法：</p>
+<ul>
+<li>hive -e “sql语句” &gt;   file</li>
+<li>hive -f  sql文件   &gt;    file</li>
+<li>在linux命令行中，运行如下命令；导出myhive.stu表的数据到本地磁盘文件/kkb/install/hivedatas/student1.txt</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive -e 'select * from myhive.stu;' &gt; /kkb/install/hivedatas/student1.txt</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-export导出到HDFS上"><a href="#3-3-export导出到HDFS上" class="headerlink" title="3.3 export导出到HDFS上"></a>3.3 export导出到HDFS上</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export table  myhive.stu to '/kkb/<span class="keyword">install</span>/hivedatas/stuexport<span class="string">';</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-Hive的静态分区和动态分区"><a href="#4-Hive的静态分区和动态分区" class="headerlink" title="4. Hive的静态分区和动态分区"></a>4. Hive的静态分区和动态分区</h3><h4 id="4-1-静态分区"><a href="#4-1-静态分区" class="headerlink" title="4.1 静态分区"></a>4.1 静态分区</h4><ul>
+<li><p>表的分区字段的值需要开发人员手动给定</p>
+</li>
+<li><p>创建分区表</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> myhive;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> order_partition(</span><br><span class="line">order_number <span class="keyword">string</span>,</span><br><span class="line">order_price  <span class="keyword">double</span>,</span><br><span class="line">order_time <span class="keyword">string</span></span><br><span class="line">)</span><br><span class="line">partitioned <span class="keyword">BY</span>(<span class="keyword">month</span> <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span>;</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>准备数据</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cd /kkb/install/hivedatas</span><br><span class="line">vim order.txt </span><br><span class="line"></span><br><span class="line">10001	100	2019-03-02</span><br><span class="line">10002	200	2019-03-02</span><br><span class="line">10003	300	2019-03-02</span><br><span class="line">10004	400	2019-03-03</span><br><span class="line">10005	500	2019-03-03</span><br><span class="line">10006	600	2019-03-03</span><br><span class="line">10007	700	2019-03-04</span><br><span class="line">10008	800	2019-03-04</span><br><span class="line">10009	900	2019-03-04</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>加载数据到分区表</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">load</span> <span class="keyword">data</span> <span class="keyword">local</span> inpath <span class="string">'/kkb/install/hivedatas/order.txt'</span> overwrite <span class="keyword">into</span> <span class="keyword">table</span> order_partition <span class="keyword">partition</span>(<span class="keyword">month</span>=<span class="string">'2019-03'</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>4、查询结果数据    </li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> order_partition <span class="keyword">where</span> <span class="keyword">month</span>=<span class="string">'2019-03'</span>;</span><br><span class="line">结果为：</span><br><span class="line">  </span><br><span class="line">10001   100.0   2019-03-02      2019-03</span><br><span class="line">10002   200.0   2019-03-02      2019-03</span><br><span class="line">10003   300.0   2019-03-02      2019-03</span><br><span class="line">10004   400.0   2019-03-03      2019-03</span><br><span class="line">10005   500.0   2019-03-03      2019-03</span><br><span class="line">10006   600.0   2019-03-03      2019-03</span><br><span class="line">10007   700.0   2019-03-04      2019-03</span><br><span class="line">10008   800.0   2019-03-04      2019-03</span><br><span class="line">10009   900.0   2019-03-04      2019-03</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="4-2-动态分区"><a href="#4-2-动态分区" class="headerlink" title="4.2 动态分区"></a>4.2 动态分区</h4><ul>
+<li><p>按照需求实现把数据自动导入到表的相应分区中，==不需要手动指定分区字段的值==</p>
+</li>
+<li><p><strong>需求：根据分区字段不同的值，自动将数据导入到分区表不同的分区中</strong> </p>
+</li>
+<li><p>创建表</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--创建普通表</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_order(</span><br><span class="line">    order_number <span class="keyword">string</span>,</span><br><span class="line">    order_price  <span class="keyword">double</span>, </span><br><span class="line">    order_time   <span class="keyword">string</span></span><br><span class="line">)<span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">--创建目标分区表</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> order_dynamic_partition(</span><br><span class="line">    order_number <span class="keyword">string</span>,</span><br><span class="line">    order_price  <span class="keyword">double</span>    </span><br><span class="line">)partitioned <span class="keyword">BY</span>(order_time <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>准备数据</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cd /kkb/install/hivedatas</span><br><span class="line">vim order_partition.txt</span><br><span class="line"></span><br><span class="line">10001	100	2019-03-02</span><br><span class="line">10002	200	2019-03-02</span><br><span class="line">10003	300	2019-03-02</span><br><span class="line">10004	400	2019-03-03</span><br><span class="line">10005	500	2019-03-03</span><br><span class="line">10006	600	2019-03-03</span><br><span class="line">10007	700	2019-03-04</span><br><span class="line">10008	800	2019-03-04</span><br><span class="line">10009	900	2019-03-04</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>向普通表t_order加载数据</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">load</span> <span class="keyword">data</span> <span class="keyword">local</span> inpath <span class="string">'/kkb/install/hivedatas/order_partition.txt'</span> overwrite <span class="keyword">into</span> <span class="keyword">table</span> t_order;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>动态加载数据到分区表中</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 要想进行动态分区，需要设置参数</span></span><br><span class="line"><span class="comment">-- 开启动态分区功能</span></span><br><span class="line">hive&gt; set hive.exec.dynamic.partition=true; </span><br><span class="line"><span class="comment">-- 设置hive为非严格模式</span></span><br><span class="line">hive&gt; set hive.exec.dynamic.partition.mode=nonstrict; </span><br><span class="line">hive&gt; insert into table order_dynamic_partition partition(order_time) select order_number, order_price, order_time from t_order;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看分区</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; show partitions order_dynamic_partition;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/14/Hive%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/assets/1569313506031.png" alt="1569313506031"></p>
+<h3 id="5-Hive的查询语法"><a href="#5-Hive的查询语法" class="headerlink" title="5. Hive的查询语法"></a>5. Hive的查询语法</h3><h4 id="5-1-基本查询"><a href="#5-1-基本查询" class="headerlink" title="5.1 基本查询"></a>5.1 基本查询</h4><ul>
+<li>注意<ul>
+<li>SQL 语言==大小写不敏感==</li>
+<li>SQL 可以写在一行或者多行</li>
+<li>==关键字不能被缩写也不能分行==</li>
+<li>各子句一般要分行写</li>
+<li>使用缩进提高语句的可读性</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-1-1-查询全表和特定列"><a href="#5-1-1-查询全表和特定列" class="headerlink" title="5.1.1 查询全表和特定列"></a>5.1.1 查询全表和特定列</h5><ul>
+<li>全表查询</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> stu;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>选择特定列查询</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">name</span> <span class="keyword">from</span> stu;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-1-2-列起别名"><a href="#5-1-2-列起别名" class="headerlink" title="5.1.2 列起别名"></a>5.1.2 列起别名</h5><ul>
+<li><p>重命名一个列</p>
+<ul>
+<li>紧跟列名，也可以在列名和别名之间加入关键字 ‘as’ </li>
+</ul>
+</li>
+<li><p>案例实操</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">name</span> <span class="keyword">as</span> stuName <span class="keyword">from</span> stu;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-1-3-常用函数"><a href="#5-1-3-常用函数" class="headerlink" title="5.1.3 常用函数"></a>5.1.3 常用函数</h5><ul>
+<li>求总行数（count）</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">count</span>(*) cnt <span class="keyword">from</span> score;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>求分数的最大值（max）</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">max</span>(s_score) <span class="keyword">from</span> score;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>求分数的最小值（min）</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">min</span>(s_score) <span class="keyword">from</span> score;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>求分数的总和（sum）</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">sum</span>(s_score) <span class="keyword">from</span> score;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>求分数的平均值（avg）</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">avg</span>(s_score) <span class="keyword">from</span> score;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-1-4-limit-语句"><a href="#5-1-4-limit-语句" class="headerlink" title="5.1.4 limit 语句"></a>5.1.4 limit 语句</h5><ul>
+<li>imit子句用于限制返回的行数。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span>  * <span class="keyword">from</span> score <span class="keyword">limit</span> <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-1-5-where-语句"><a href="#5-1-5-where-语句" class="headerlink" title="5.1.5 where 语句"></a>5.1.5 where 语句</h5><ul>
+<li>使用 where 子句，将不满足条件的行过滤掉</li>
+<li>==where 子句紧随from子句==</li>
+<li>案例实操</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> score <span class="keyword">where</span> s_score &gt; <span class="number">60</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-1-6-算术运算符"><a href="#5-1-6-算术运算符" class="headerlink" title="5.1.6 算术运算符"></a>5.1.6 算术运算符</h5><table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A+B</td>
+<td>A和B 相加</td>
+</tr>
+<tr>
+<td>A-B</td>
+<td>A减去B</td>
+</tr>
+<tr>
+<td>A*B</td>
+<td>A和B 相乘</td>
+</tr>
+<tr>
+<td>A/B</td>
+<td>A除以B</td>
+</tr>
+<tr>
+<td>A%B</td>
+<td>A对B取余</td>
+</tr>
+<tr>
+<td>A&amp;B</td>
+<td>A和B按位取与</td>
+</tr>
+<tr>
+<td>A|B</td>
+<td>A和B按位取或</td>
+</tr>
+<tr>
+<td>A^B</td>
+<td>A和B按位取异或</td>
+</tr>
+<tr>
+<td>~A</td>
+<td>A按位取反</td>
+</tr>
+</tbody></table>
+<h5 id="5-1-7-比较运算符"><a href="#5-1-7-比较运算符" class="headerlink" title="5.1.7 比较运算符"></a>5.1.7 比较运算符</h5><table>
+<thead>
+<tr>
+<th align="center">操作符</th>
+<th align="center">支持的数据类型</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">A=B</td>
+<td align="center">基本数据类型</td>
+<td align="center">如果A等于B则返回true，反之返回false</td>
+</tr>
+<tr>
+<td align="center">A&lt;=&gt;B</td>
+<td align="center">基本数据类型</td>
+<td align="center">如果A和B都为NULL，则返回true，其他的和等号（=）操作符的结果一致，如果任一为NULL则结果为NULL</td>
+</tr>
+<tr>
+<td align="center">A&lt;&gt;B, A!=B</td>
+<td align="center">基本数据类型</td>
+<td align="center">A或者B为NULL则返回NULL；如果A不等于B，则返回true，反之返回false</td>
+</tr>
+<tr>
+<td align="center">A&lt;B</td>
+<td align="center">基本数据类型</td>
+<td align="center">A或者B为NULL，则返回NULL；如果A小于B，则返回true，反之返回false</td>
+</tr>
+<tr>
+<td align="center">A&lt;=B</td>
+<td align="center">基本数据类型</td>
+<td align="center">A或者B为NULL，则返回NULL；如果A小于等于B，则返回true，反之返回false</td>
+</tr>
+<tr>
+<td align="center">A&gt;B</td>
+<td align="center">基本数据类型</td>
+<td align="center">A或者B为NULL，则返回NULL；如果A大于B，则返回true，反之返回false</td>
+</tr>
+<tr>
+<td align="center">A&gt;=B</td>
+<td align="center">基本数据类型</td>
+<td align="center">A或者B为NULL，则返回NULL；如果A大于等于B，则返回true，反之返回false</td>
+</tr>
+<tr>
+<td align="center">A [NOT] BETWEEN B AND C</td>
+<td align="center">基本数据类型</td>
+<td align="center">如果A，B或者C任一为NULL，则结果为NULL。如果A的值大于等于B而且小于或等于C，则结果为true，反之为false。如果使用NOT关键字则可达到相反的效果。</td>
+</tr>
+<tr>
+<td align="center">A IS NULL</td>
+<td align="center">所有数据类型</td>
+<td align="center">如果A等于NULL，则返回true，反之返回false</td>
+</tr>
+<tr>
+<td align="center">A IS NOT NULL</td>
+<td align="center">所有数据类型</td>
+<td align="center">如果A不等于NULL，则返回true，反之返回false</td>
+</tr>
+<tr>
+<td align="center">IN(数值1, 数值2)</td>
+<td align="center">所有数据类型</td>
+<td align="center">使用 IN运算显示列表中的值</td>
+</tr>
+<tr>
+<td align="center">A [NOT] LIKE B</td>
+<td align="center">STRING 类型</td>
+<td align="center">B是一个SQL下的简单正则表达式，如果A与其匹配的话，则返回true；反之返回false。B的表达式说明如下：‘x%’表示A必须以字母‘x’开头，‘%x’表示A必须以字母’x’结尾，而‘%x%’表示A包含有字母’x’,可以位于开头，结尾或者字符串中间。如果使用NOT关键字则可达到相反的效果。like不是正则，而是通配符</td>
+</tr>
+<tr>
+<td align="center">A RLIKE B, A REGEXP B</td>
+<td align="center">STRING 类型</td>
+<td align="center">B是一个正则表达式，如果A与其匹配，则返回true；反之返回false。匹配使用的是JDK中的正则表达式接口实现的，因为正则也依据其中的规则。例如，正则表达式必须和整个字符串A相匹配，而不是只需与其字符串匹配。</td>
+</tr>
+</tbody></table>
+<h5 id="5-1-8-逻辑运算符"><a href="#5-1-8-逻辑运算符" class="headerlink" title="5.1.8 逻辑运算符"></a>5.1.8 逻辑运算符</h5><table>
+<thead>
+<tr>
+<th align="center">操作符</th>
+<th align="center">操作</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">A AND  B</td>
+<td align="center">逻辑并</td>
+<td align="center">如果A和B都是true则为true，否则false</td>
+</tr>
+<tr>
+<td align="center">A  OR  B</td>
+<td align="center">逻辑或</td>
+<td align="center">如果A或B或两者都是true则为true，否则false</td>
+</tr>
+<tr>
+<td align="center">NOT  A</td>
+<td align="center">逻辑否</td>
+<td align="center">如果A为false则为true,否则false</td>
+</tr>
+</tbody></table>
+<h4 id="5-2-分组"><a href="#5-2-分组" class="headerlink" title="5.2 分组"></a>5.2 分组</h4><h5 id="5-2-1-Group-By-语句"><a href="#5-2-1-Group-By-语句" class="headerlink" title="5.2.1 Group By 语句"></a>5.2.1 Group By 语句</h5><ul>
+<li><p>Group By语句通常会和==聚合函数==一起使用，按照一个或者多个列对结果进行分组，然后对每个组执行聚合操作。</p>
+</li>
+<li><p>Group By时select后的字段要么是分组字段、要么是聚合函数</p>
+</li>
+<li><p>==查询非分组字段会报错==</p>
+</li>
+<li><p>案例实操：</p>
+<ul>
+<li>计算每个学生的平均分数</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s_id, <span class="keyword">avg</span>(s_score) <span class="keyword">from</span> score <span class="keyword">group</span> <span class="keyword">by</span> s_id;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>计算每个学生最高的分数</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s_id, <span class="keyword">max</span>(s_score) <span class="keyword">from</span> score <span class="keyword">group</span> <span class="keyword">by</span> s_id;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-2-2-Having语句"><a href="#5-2-2-Having语句" class="headerlink" title="5.2.2 Having语句"></a>5.2.2 Having语句</h5><ul>
+<li><p>having 与 where 不同点</p>
+<ul>
+<li>where针对==表中的列发挥作用==，查询数据；==having针对查询结果中的列==发挥作用，筛选数据</li>
+<li>where后面==不能写聚合函数==，而having后面可以==使用聚合函数==</li>
+<li>having只用于group by分组统计语句</li>
+</ul>
+</li>
+<li><p>案例实操</p>
+<ul>
+<li>求每个学生的平均分数</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s_id, <span class="keyword">avg</span>(s_score) <span class="keyword">from</span> score <span class="keyword">group</span> <span class="keyword">by</span> s_id;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>求每个学生平均分数大于60的人</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s_id, <span class="keyword">avg</span>(s_score) <span class="keyword">as</span> avgScore <span class="keyword">from</span> score <span class="keyword">group</span> <span class="keyword">by</span> s_id <span class="keyword">having</span> avgScore &gt; <span class="number">60</span>;</span><br><span class="line">等价于</span><br><span class="line"><span class="keyword">select</span> s_id, <span class="keyword">avg</span>(s_score) <span class="keyword">as</span> avgScore <span class="keyword">from</span> score <span class="keyword">group</span> <span class="keyword">by</span> s_id <span class="keyword">having</span> <span class="keyword">avg</span>(s_score) &gt; <span class="number">60</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="5-3-join语句"><a href="#5-3-join语句" class="headerlink" title="5.3 join语句"></a>5.3 join语句</h4><h5 id="5-3-1-等值-join"><a href="#5-3-1-等值-join" class="headerlink" title="5.3.1 等值 join"></a>5.3.1 等值 join</h5><ul>
+<li><p>Hive支持通常的SQL JOIN语句，但是只支持等值连接，==不支持非等值连接==。</p>
+</li>
+<li><p>案例实操</p>
+<ul>
+<li>根据学生和成绩表，查询学生姓名对应的成绩</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> stu <span class="keyword">left</span> <span class="keyword">join</span> score <span class="keyword">on</span> stu.id = score.s_id;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-3-2-表的别名"><a href="#5-3-2-表的别名" class="headerlink" title="5.3.2 表的别名"></a>5.3.2 表的别名</h5><ul>
+<li><p>好处</p>
+<ul>
+<li>使用别名可以简化查询。</li>
+<li>使用表名前缀可以提高执行效率。</li>
+</ul>
+</li>
+<li><p>案例实操：合并老师与课程表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- hive当中创建course表并加载数据</span></span><br><span class="line">  <span class="keyword">create</span> <span class="keyword">table</span> course (c_id <span class="keyword">string</span>, c_name <span class="keyword">string</span>, t_id <span class="keyword">string</span>) </span><br><span class="line">  <span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">load</span> <span class="keyword">data</span> <span class="keyword">local</span> inpath <span class="string">'/kkb/install/hivedatas/course.csv'</span> overwrite <span class="keyword">into</span> <span class="keyword">table</span> course;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">select</span> * <span class="keyword">from</span> teacher t <span class="keyword">join</span> course c <span class="keyword">on</span> t.t_id = c.t_id;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-3-3-内连接-inner-join"><a href="#5-3-3-内连接-inner-join" class="headerlink" title="5.3.3 内连接 inner join"></a>5.3.3 内连接 inner join</h5><ul>
+<li><p>内连接：只有进行连接的两个表中都存在与连接条件相匹配的数据才会被保留下来。</p>
+<ul>
+<li>join默认是inner  join</li>
+</ul>
+</li>
+<li><p>案例实操</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> teacher t <span class="keyword">inner</span> <span class="keyword">join</span> course c  <span class="keyword">on</span> t.t_id = c.t_id;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-3-4-左外连接-left-outer-join"><a href="#5-3-4-左外连接-left-outer-join" class="headerlink" title="5.3.4 左外连接 left outer join"></a>5.3.4 左外连接 left outer join</h5><ul>
+<li><p>左外连接：</p>
+<ul>
+<li>join操作符==左边表中==符合where子句的所有记录将会被返回。</li>
+<li>右边表的指定字段没有符合条件的值的话，那么就使用null值替代。</li>
+</ul>
+</li>
+<li><p>案例实操：查询老师对应的课程</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> teacher t <span class="keyword">left</span> <span class="keyword">outer</span> <span class="keyword">join</span> course c <span class="keyword">on</span> t.t_id = c.t_id;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-3-5-右外连接-right-outer-join"><a href="#5-3-5-右外连接-right-outer-join" class="headerlink" title="5.3.5 右外连接 right outer join"></a>5.3.5 右外连接 right outer join</h5><ul>
+<li><p>右外连接：</p>
+<ul>
+<li>join操作符==右边表中==符合where子句的所有记录将会被返回。</li>
+<li>左边表的指定字段没有符合条件的值的话，那么就使用null值替代。</li>
+</ul>
+</li>
+<li><p>案例实操</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> teacher t <span class="keyword">right</span> <span class="keyword">outer</span> <span class="keyword">join</span> course c <span class="keyword">on</span> t.t_id = c.t_id;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-3-6-满外连接-full-outer-join"><a href="#5-3-6-满外连接-full-outer-join" class="headerlink" title="5.3.6 满外连接 full outer join"></a>5.3.6 满外连接 full outer join</h5><ul>
+<li><p>满外连接：</p>
+<ul>
+<li>将会返回==所有表中==符合where语句条件的所有记录。</li>
+<li>如果任一表的指定字段没有符合条件的值的话，那么就使用null值替代。</li>
+</ul>
+</li>
+<li><p>案例实操</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> teacher t <span class="keyword">full</span> <span class="keyword">outer</span> <span class="keyword">join</span> course c <span class="keyword">on</span> t.t_id = c.t_id;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-3-7-多表连接"><a href="#5-3-7-多表连接" class="headerlink" title="5.3.7 多表连接"></a>5.3.7 多表连接</h5><ul>
+<li><p><strong>多个表使用join进行连接</strong></p>
+</li>
+<li><p>==注意：==连接 n个表，至少需要n-1个连接条件。例如：连接三个表，至少需要两个连接条件。</p>
+</li>
+<li><p>案例实操</p>
+<ul>
+<li>多表连接查询，查询商品对应的品牌和类别信息</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> products p</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> brands b <span class="keyword">on</span> p.brand_id = b.id </span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> categorys c <span class="keyword">on</span> p.category_id = c.id;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="5-4-排序"><a href="#5-4-排序" class="headerlink" title="5.4 排序"></a>5.4 排序</h4><ul>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+SortBy" target="_blank" rel="noopener">官网文档</a></li>
+</ul>
+<h5 id="5-4-1-order-by-全局排序"><a href="#5-4-1-order-by-全局排序" class="headerlink" title="5.4.1 order by 全局排序"></a>5.4.1 order by 全局排序</h5><ul>
+<li><p>全局排序，只有一个reduce</p>
+</li>
+<li><p>使用 ORDER BY 子句排序</p>
+<ul>
+<li>asc ( ascend) 升序 (默认)</li>
+<li>desc (descend) 降序</li>
+</ul>
+</li>
+<li><p>order by 子句在select语句的结尾</p>
+</li>
+<li><p>案例实操</p>
+<ul>
+<li>查询学生的成绩，并按照分数降序排列</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> score s <span class="keyword">order</span> <span class="keyword">by</span> s_score <span class="keyword">desc</span> ;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-4-2-按照别名排序"><a href="#5-4-2-按照别名排序" class="headerlink" title="5.4.2 按照别名排序"></a>5.4.2 按照别名排序</h5><ul>
+<li><p>按照学生分数的平均值排序</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s_id, <span class="keyword">avg</span>(s_score) avgscore <span class="keyword">from</span> score <span class="keyword">group</span> <span class="keyword">by</span> s_id <span class="keyword">order</span> <span class="keyword">by</span> avgscore <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-4-3-每个MapReduce内部排序（Sort-By）局部排序"><a href="#5-4-3-每个MapReduce内部排序（Sort-By）局部排序" class="headerlink" title="5.4.3 每个MapReduce内部排序（Sort By）局部排序"></a>5.4.3 每个MapReduce内部排序（Sort By）局部排序</h5><ul>
+<li><p>sort by：每个reducer内部有序排序（局部有序），对全局结果集来说并非全局有序。</p>
+</li>
+<li><p>设置reduce个数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set mapreduce.job.reduces&#x3D;3;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看reduce的个数</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> mapreduce.job.reduces;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询成绩按照成绩降序排列</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> score s <span class="keyword">sort</span> <span class="keyword">by</span> s.s_score;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将查询结果导入到文件中（按照成绩降序排列）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">local</span> <span class="keyword">directory</span> <span class="string">'/kkb/install/hivedatas/sort'</span> <span class="keyword">select</span> * <span class="keyword">from</span> score s <span class="keyword">sort</span> <span class="keyword">by</span> s.s_score;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-4-4-distribute-by-分区排序"><a href="#5-4-4-distribute-by-分区排序" class="headerlink" title="5.4.4 distribute by 分区排序"></a>5.4.4 distribute by 分区排序</h5><ul>
+<li><p>distribute by：</p>
+<ul>
+<li>类似MR中partition，==采集hash算法，在map端将查询的结果中hash值相同的结果分发到对应的reduce文件中==。</li>
+<li>结合sort by使用。</li>
+</ul>
+</li>
+<li><p>注意</p>
+<ul>
+<li>Hive要求 <strong>distribute by</strong> 语句要写在 <strong>sort by</strong> 语句之前。</li>
+</ul>
+</li>
+<li><p>案例实操</p>
+<ul>
+<li><p>先按照学生 sid 进行分区，再按照学生成绩进行排序</p>
+</li>
+<li><p>设置reduce的个数</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> mapreduce.job.reduces=<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>通过distribute by  进行数据的分区,，将不同的sid 划分到对应的reduce当中去</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">local</span> <span class="keyword">directory</span> <span class="string">'/kkb/install/hivedatas/distribute'</span> <span class="keyword">select</span> * <span class="keyword">from</span> score <span class="keyword">distribute</span> <span class="keyword">by</span> s_id <span class="keyword">sort</span> <span class="keyword">by</span> s_score;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-4-5-cluster-by"><a href="#5-4-5-cluster-by" class="headerlink" title="5.4.5 cluster by"></a>5.4.5 cluster by</h5><ul>
+<li><p>当distribute by和sort by字段相同时，可以使用cluster by方式代替</p>
+</li>
+<li><p>除了distribute by 的功能外，还会对该字段进行排序，所以cluster by = distribute by + sort by</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--以下两种写法等价</span></span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">local</span> <span class="keyword">directory</span> <span class="string">'/kkb/install/hivedatas/distribute_sort'</span> <span class="keyword">select</span> * <span class="keyword">from</span> score <span class="keyword">distribute</span> <span class="keyword">by</span> s_score <span class="keyword">sort</span> <span class="keyword">by</span> s_score;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">local</span> <span class="keyword">directory</span> <span class="string">'/kkb/install/hivedatas/cluster'</span> <span class="keyword">select</span> * <span class="keyword">from</span> score  cluster <span class="keyword">by</span> s_score;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="五、拓展点、未来计划"><a href="#五、拓展点、未来计划" class="headerlink" title="五、拓展点、未来计划"></a>五、拓展点、未来计划</h2><ul>
+<li>平时工作中，要多查看<a href="https://cwiki.apache.org/confluence/display/Hive/Home" target="_blank" rel="noopener">Hive官方文档</a></li>
+<li>Hive可视化工具dbeaver</li>
+</ul>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://chaoyang66.gitee.io/2020/10/14/Hive%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/" rel="tag">hive</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2020/10/12/%E5%88%9D%E8%AF%86Hive/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">初识Hive</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "SctsT8yefP0D7VSA3skojjQJ-gzGzoHsz",
+    app_key: "m5U9PA8tUiK3NJFScBqsQ8pg",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2019-2020
+        <i class="ri-heart-fill heart_icon"></i> 张朝阳
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src=''></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/avatar.jpg" alt="奋斗的皮皮虾"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechatpay.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Subtitle -->
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="86"
+        src="//music.163.com/outchain/player?type=2&id=37653063&auto=1&height=66"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

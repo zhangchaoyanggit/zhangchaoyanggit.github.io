@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://chaoyang66.gitee.io/"/>
-  <updated>2020-11-27T14:54:10.819Z</updated>
+  <updated>2020-12-13T12:56:25.817Z</updated>
   <id>https://chaoyang66.gitee.io/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>vim 命令</title>
-    <link href="https://chaoyang66.gitee.io/2020/11/27/vim%20%E5%91%BD%E4%BB%A4/"/>
-    <id>https://chaoyang66.gitee.io/2020/11/27/vim%20%E5%91%BD%E4%BB%A4/</id>
-    <published>2020-11-27T14:54:10.819Z</published>
-    <updated>2020-11-27T14:54:10.819Z</updated>
+    <title>Hive数据仓库操作命令</title>
+    <link href="https://chaoyang66.gitee.io/2020/10/14/Hive%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/"/>
+    <id>https://chaoyang66.gitee.io/2020/10/14/Hive%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/</id>
+    <published>2020-10-14T14:23:11.000Z</published>
+    <updated>2020-12-13T12:56:25.817Z</updated>
     
     <summary type="html">
     
@@ -29,22 +29,17 @@
       
         
         
-          &lt;p&gt;vim 命令&lt;/p&gt;
-&lt;p&gt;e :  行尾部&lt;/p&gt;
-&lt;p&gt;w: 行头部&lt;/p&gt;
-&lt;p&gt;dd 删除当前行&lt;/p&gt;
-&lt;p&gt;cc 剪切当前行&lt;/p&gt;
-&lt;p&gt;p 粘贴&lt;/p&gt;
-&lt;p&gt;u 撤销&lt;/p&gt;
-&lt;p&gt;ctrl +R 反撤销&lt;/p&gt;
-&lt;p&gt;r 替换&lt;/p&gt;
-&lt;p&gt;yy
+          &lt;h1 id=&quot;Hive数据仓库操作命令&quot;&gt;&lt;a href=&quot;#Hive数据仓库操作命令&quot; class=&quot;headerlink&quot; title=&quot;Hive数据仓库操作命令&quot;&gt;&lt;/a&gt;Hive数据仓库操作命令&lt;/h1&gt;&lt;h2 id=&quot;一、课前准备&quot;&gt;&lt;a
         
       
     
     </summary>
     
     
+      <category term="bigdata" scheme="https://chaoyang66.gitee.io/categories/bigdata/"/>
+    
+    
+      <category term="hive" scheme="https://chaoyang66.gitee.io/tags/hive/"/>
     
   </entry>
   
@@ -53,7 +48,7 @@
     <link href="https://chaoyang66.gitee.io/2020/10/12/%E5%88%9D%E8%AF%86Hive/"/>
     <id>https://chaoyang66.gitee.io/2020/10/12/%E5%88%9D%E8%AF%86Hive/</id>
     <published>2020-10-12T13:22:11.000Z</published>
-    <updated>2020-12-13T11:36:48.286Z</updated>
+    <updated>2020-12-13T12:57:40.947Z</updated>
     
     <summary type="html">
     
@@ -130,38 +125,11 @@
   </entry>
   
   <entry>
-    <title>大数据课程课前环境准备</title>
-    <link href="https://chaoyang66.gitee.io/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/"/>
-    <id>https://chaoyang66.gitee.io/2020/09/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/</id>
-    <published>2020-09-28T17:14:23.000Z</published>
-    <updated>2020-12-05T10:33:06.461Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;大数据课程课前环境准备&quot;&gt;&lt;a href=&quot;#大数据课程课前环境准备&quot; class=&quot;headerlink&quot; title=&quot;大数据课程课前环境准备&quot;&gt;&lt;/a&gt;大数据课程课前环境准备&lt;/h1&gt;&lt;h2 id=&quot;一、课前准备&quot;&gt;&lt;a href=&quot;#一、课前准备&quot;
-        
-      
-    
-    </summary>
-    
-    
-      <category term="bigdata" scheme="https://chaoyang66.gitee.io/categories/bigdata/"/>
-    
-    
-      <category term="hadoop" scheme="https://chaoyang66.gitee.io/tags/hadoop/"/>
-    
-  </entry>
-  
-  <entry>
     <title>CentOS 7安装MySQL5.7版本</title>
     <link href="https://chaoyang66.gitee.io/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/"/>
     <id>https://chaoyang66.gitee.io/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/</id>
-    <published>2020-09-28T11:46:13.000Z</published>
-    <updated>2020-12-13T10:36:19.446Z</updated>
+    <published>2020-09-28T15:46:13.000Z</published>
+    <updated>2020-12-13T12:59:09.757Z</updated>
     
     <summary type="html">
     
@@ -184,11 +152,147 @@
   </entry>
   
   <entry>
+    <title>Capacity Scheduler</title>
+    <link href="https://chaoyang66.gitee.io/2020/09/28/Capacity%20Scheduler-%E6%89%A9%E5%B1%95/"/>
+    <id>https://chaoyang66.gitee.io/2020/09/28/Capacity%20Scheduler-%E6%89%A9%E5%B1%95/</id>
+    <published>2020-09-28T13:22:11.000Z</published>
+    <updated>2020-12-13T12:47:28.739Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;img src=&quot;/2020/09/28/Capacity%20Scheduler-%E6%89%A9%E5%B1%95/assets/20180912140209122.png&quot; alt=&quot;三种调度模型&quot;&gt;&lt;/p&gt;
+&lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="bigdata" scheme="https://chaoyang66.gitee.io/categories/bigdata/"/>
+    
+    
+      <category term="hadoop" scheme="https://chaoyang66.gitee.io/tags/hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>hadoop3.x新特性</title>
+    <link href="https://chaoyang66.gitee.io/2020/09/28/Hadoop3.x%E6%96%B0%E7%89%B9%E6%80%A7/"/>
+    <id>https://chaoyang66.gitee.io/2020/09/28/Hadoop3.x%E6%96%B0%E7%89%B9%E6%80%A7/</id>
+    <published>2020-09-28T13:22:11.000Z</published>
+    <updated>2020-12-13T12:50:57.137Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;hadoop3-x新特性&quot;&gt;&lt;a href=&quot;#hadoop3-x新特性&quot; class=&quot;headerlink&quot; title=&quot;hadoop3.x新特性&quot;&gt;&lt;/a&gt;hadoop3.x新特性&lt;/h2&gt;&lt;h4 id=&quot;1-新特性&quot;&gt;&lt;a href=&quot;#1-新特性&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="bigdata" scheme="https://chaoyang66.gitee.io/categories/bigdata/"/>
+    
+    
+      <category term="hadoop" scheme="https://chaoyang66.gitee.io/tags/hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>hadoop的企业级调优</title>
+    <link href="https://chaoyang66.gitee.io/2020/09/28/hadoop%E7%9A%84%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%B0%83%E4%BC%98/"/>
+    <id>https://chaoyang66.gitee.io/2020/09/28/hadoop%E7%9A%84%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%B0%83%E4%BC%98/</id>
+    <published>2020-09-28T13:22:11.000Z</published>
+    <updated>2020-12-13T12:47:45.889Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;hadoop的企业级调优&quot;&gt;&lt;a href=&quot;#hadoop的企业级调优&quot; class=&quot;headerlink&quot; title=&quot;hadoop的企业级调优&quot;&gt;&lt;/a&gt;hadoop的企业级调优&lt;/h1&gt;&lt;h1 id=&quot;一、课前准备&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="bigdata" scheme="https://chaoyang66.gitee.io/categories/bigdata/"/>
+    
+    
+      <category term="hadoop" scheme="https://chaoyang66.gitee.io/tags/hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MapReduce分布式计算模型</title>
+    <link href="https://chaoyang66.gitee.io/2020/09/27/MapReduce%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B/"/>
+    <id>https://chaoyang66.gitee.io/2020/09/27/MapReduce%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B/</id>
+    <published>2020-09-27T14:23:11.000Z</published>
+    <updated>2020-12-13T14:24:03.153Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;MapReduce分布式计算模型&quot;&gt;&lt;a href=&quot;#MapReduce分布式计算模型&quot; class=&quot;headerlink&quot; title=&quot;MapReduce分布式计算模型&quot;&gt;&lt;/a&gt;MapReduce分布式计算模型&lt;/h1&gt;&lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="bigdata" scheme="https://chaoyang66.gitee.io/categories/bigdata/"/>
+    
+    
+      <category term="MapReduce" scheme="https://chaoyang66.gitee.io/tags/MapReduce/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>大数据课程课前环境准备</title>
+    <link href="https://chaoyang66.gitee.io/2020/09/25/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/"/>
+    <id>https://chaoyang66.gitee.io/2020/09/25/%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%AF%BE%E7%A8%8B%E8%AF%BE%E5%89%8D%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/</id>
+    <published>2020-09-24T17:14:23.000Z</published>
+    <updated>2020-12-13T12:58:10.416Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;大数据课程课前环境准备&quot;&gt;&lt;a href=&quot;#大数据课程课前环境准备&quot; class=&quot;headerlink&quot; title=&quot;大数据课程课前环境准备&quot;&gt;&lt;/a&gt;大数据课程课前环境准备&lt;/h1&gt;&lt;h2 id=&quot;一、课前准备&quot;&gt;&lt;a href=&quot;#一、课前准备&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="bigdata" scheme="https://chaoyang66.gitee.io/categories/bigdata/"/>
+    
+    
+      <category term="hadoop" scheme="https://chaoyang66.gitee.io/tags/hadoop/"/>
+    
+  </entry>
+  
+  <entry>
     <title>深入理解MysqlB+Tree</title>
     <link href="https://chaoyang66.gitee.io/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/"/>
     <id>https://chaoyang66.gitee.io/2020/05/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3MySQL%E7%B4%A2%E5%BC%95B+Tree/</id>
     <published>2020-05-29T13:43:22.000Z</published>
-    <updated>2020-12-05T10:42:12.011Z</updated>
+    <updated>2020-12-13T11:45:34.760Z</updated>
     
     <summary type="html">
     
@@ -451,114 +555,6 @@
     
     
       <category term="sync锁实现原理" scheme="https://chaoyang66.gitee.io/tags/sync%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Zookeeper的ZAB协议</title>
-    <link href="https://chaoyang66.gitee.io/2019/11/05/Zookeeper%E7%9A%84ZAB%E5%8D%8F%E8%AE%AE/"/>
-    <id>https://chaoyang66.gitee.io/2019/11/05/Zookeeper%E7%9A%84ZAB%E5%8D%8F%E8%AE%AE/</id>
-    <published>2019-11-05T12:12:58.000Z</published>
-    <updated>2019-11-12T15:23:03.325Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Zookeeper的ZAB协议&quot;&gt;&lt;a href=&quot;#Zookeeper的ZAB协议&quot; class=&quot;headerlink&quot; title=&quot;Zookeeper的ZAB协议&quot;&gt;&lt;/a&gt;Zookeeper的ZAB协议&lt;/h2&gt;&lt;h3
-        
-      
-    
-    </summary>
-    
-    
-      <category term="zookeeper相关" scheme="https://chaoyang66.gitee.io/categories/zookeeper%E7%9B%B8%E5%85%B3/"/>
-    
-    
-      <category term="zookeeper" scheme="https://chaoyang66.gitee.io/tags/zookeeper/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>深入理解Java内存模型</title>
-    <link href="https://chaoyang66.gitee.io/2019/11/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
-    <id>https://chaoyang66.gitee.io/2019/11/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</id>
-    <published>2019-11-05T12:12:58.000Z</published>
-    <updated>2019-11-11T13:58:35.483Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;深入理解Java内存模型&quot;&gt;&lt;a href=&quot;#深入理解Java内存模型&quot; class=&quot;headerlink&quot; title=&quot;深入理解Java内存模型&quot;&gt;&lt;/a&gt;深入理解Java内存模型&lt;/h1&gt;&lt;p&gt;java内存模型(Java Memory
-        
-      
-    
-    </summary>
-    
-    
-      <category term="JVM" scheme="https://chaoyang66.gitee.io/categories/JVM/"/>
-    
-    
-      <category term="JVM" scheme="https://chaoyang66.gitee.io/tags/JVM/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>循环依赖</title>
-    <link href="https://chaoyang66.gitee.io/2019/10/28/Spring%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/"/>
-    <id>https://chaoyang66.gitee.io/2019/10/28/Spring%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/</id>
-    <published>2019-10-28T12:10:11.000Z</published>
-    <updated>2019-12-22T08:31:14.071Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;Spring-IOC-容器源码分析-循环依赖&quot;&gt;&lt;a href=&quot;#Spring-IOC-容器源码分析-循环依赖&quot; class=&quot;headerlink&quot; title=&quot;Spring IOC 容器源码分析 - 循环依赖&quot;&gt;&lt;/a&gt;Spring IOC 容器源码分析
-        
-      
-    
-    </summary>
-    
-    
-      <category term="spring" scheme="https://chaoyang66.gitee.io/categories/spring/"/>
-    
-    
-      <category term="spring循环依赖" scheme="https://chaoyang66.gitee.io/tags/spring%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Spring IOC 学习分享</title>
-    <link href="https://chaoyang66.gitee.io/2019/10/16/SpringIocLearn/"/>
-    <id>https://chaoyang66.gitee.io/2019/10/16/SpringIocLearn/</id>
-    <published>2019-10-16T15:10:11.000Z</published>
-    <updated>2020-01-08T15:24:08.056Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;Spring-IOC学习分享&quot;&gt;&lt;a href=&quot;#Spring-IOC学习分享&quot; class=&quot;headerlink&quot; title=&quot;Spring IOC学习分享&quot;&gt;&lt;/a&gt;Spring IOC学习分享&lt;/h1&gt;&lt;h4 id=&quot;引言&quot;&gt;&lt;a
-        
-      
-    
-    </summary>
-    
-    
-      <category term="spring" scheme="https://chaoyang66.gitee.io/categories/spring/"/>
-    
-    
-      <category term="ioc容器" scheme="https://chaoyang66.gitee.io/tags/ioc%E5%AE%B9%E5%99%A8/"/>
     
   </entry>
   
