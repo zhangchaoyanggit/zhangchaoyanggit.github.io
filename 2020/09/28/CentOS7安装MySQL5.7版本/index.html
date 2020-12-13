@@ -143,7 +143,7 @@
 <blockquote>
 <p>出现Installed!字样，表示成功安装</p>
 </blockquote>
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910301534.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910301534.png" alt></p>
 <ul>
 <li>使用wget命令下载mysql的rpm包</li>
 </ul>
@@ -155,7 +155,7 @@
 </blockquote>
 <h3 id="2-2-安装mysql"><a href="#2-2-安装mysql" class="headerlink" title="2.2 安装mysql"></a>2.2 安装mysql</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 soft]# yum -y install mysql57-community-release-el7-10.noarch.rpm</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910301549.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910301549.png" alt></p>
 <ul>
 <li><p>安装mysql server</p>
 <p>这步可能会花些时间，需要在线下载，视网速而定；然后再安装；安装完成后就会覆盖掉之前的mariadb</p>
@@ -163,7 +163,7 @@
 </ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 soft]# yum -y install mysql-community-server</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910301601.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910301601.png" alt></p>
 <h2 id="3-设置mysql"><a href="#3-设置mysql" class="headerlink" title="3. 设置mysql"></a>3. 设置mysql</h2><h3 id="3-1-mysql服务"><a href="#3-1-mysql服务" class="headerlink" title="3.1 mysql服务"></a>3.1 mysql服务</h3><ul>
 <li>首先启动MySQL服务</li>
 </ul>
@@ -177,7 +177,7 @@
 <blockquote>
 <p>下图active（running）表示mysql服务已启动</p>
 </blockquote>
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910301608.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910301608.png" alt></p>
 <h3 id="3-2-修改密码"><a href="#3-2-修改密码" class="headerlink" title="3.2 修改密码"></a>3.2 修改密码</h3><ul>
 <li><p>此时MySQL已经开始正常运行，不过要登陆MySQL，还得先找出此时mysql的root用户的临时密码</p>
 <p>如下命令可以在日志文件中找出临时密码</p>
@@ -194,7 +194,7 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fHy3Su:&amp;REkh</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910301623.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910301623.png" alt></p>
 <ul>
 <li>使用临时密码，登陆mysql客户端</li>
 </ul>
@@ -205,7 +205,7 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set global validate_password_policy&#x3D;LOW;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910301634.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910301634.png" alt></p>
 <blockquote>
 <p>关键字“Query OK”表示，sql语句执行成功</p>
 </blockquote>
@@ -214,7 +214,7 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set global validate_password_length&#x3D;6;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910301639.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910301639.png" alt></p>
 <ul>
 <li>修改mysql的root用户，本地登陆的密码为123456</li>
 </ul>
@@ -247,11 +247,11 @@
 </ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 hadoop]# yum list installed mysql*</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910311059.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910311059.png" alt></p>
 <p>​        方式二</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 hadoop]# rpm -qa | grep -i mysql</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910311055.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910311055.png" alt></p>
 <h3 id="4-3-卸载mysql包"><a href="#4-3-卸载mysql包" class="headerlink" title="4.3 卸载mysql包"></a>4.3 卸载mysql包</h3><ul>
 <li><p>卸载rpm包，使用rpm -e –nodeps方式卸载，后边依次加入上图的①~⑥的包名，包名之间有空格</p>
 <blockquote>
@@ -270,7 +270,7 @@
 </ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 hadoop]# rpm -qa | grep -i mysql</span><br><span class="line">[root@node03 hadoop]# yum list installed mysql*</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910311128.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910311128.png" alt></p>
 <h3 id="4-4-删除mysql残留文件"><a href="#4-4-删除mysql残留文件" class="headerlink" title="4.4 删除mysql残留文件"></a>4.4 删除mysql残留文件</h3><ul>
 <li>查看mysql相关目录</li>
 </ul>
@@ -279,7 +279,7 @@
 <blockquote>
 <p>根据自己的实际情况，删除find出来的目录</p>
 </blockquote>
-<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/Image201910311202.png" alt></p>
+<p><img src="/2020/09/28/CentOS7%E5%AE%89%E8%A3%85MySQL5.7%E7%89%88%E6%9C%AC/images/Image201910311202.png" alt></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 hadoop]# rm -rf /var/lib/mysql/</span><br><span class="line">[root@node03 hadoop]# rm -rf /usr/share/mysql/</span><br><span class="line">[root@node03 hadoop]# rm -rf /etc/selinux/targeted/active/modules/100/mysql</span><br></pre></td></tr></table></figure>
 
 <ul>
