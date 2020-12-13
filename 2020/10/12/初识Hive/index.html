@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="好记性不如烂笔头" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    初识Hive |  奋斗的皮皮虾
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/images/avatar.jpg" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="奋斗的皮皮虾" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-初识Hive"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  初识Hive
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/10/12/%E5%88%9D%E8%AF%86Hive/" class="article-date">
+  <time datetime="2020-10-12T13:22:11.000Z" itemprop="datePublished">2020-10-12</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">5.6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">21 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="初识Hive"><a href="#初识Hive" class="headerlink" title="初识Hive"></a>初识Hive</h2><h2 id="一、课前准备"><a href="#一、课前准备" class="headerlink" title="一、课前准备"></a>一、课前准备</h2><ol>
+<li>安装好对应版本的hadoop集群，并启动hadoop的HDFS以及YARN服务</li>
+<li>MySQL安装部署及讲解视频</li>
+<li>Hive安装部署及讲解视频</li>
+<li>Hive的DDL操作预习及讲解视频</li>
+</ol>
+<h2 id="二、课堂主题"><a href="#二、课堂主题" class="headerlink" title="二、课堂主题"></a>二、课堂主题</h2><p>本堂课主要围绕hive的基础知识点进行讲解。主要包括以下几个方面</p>
+<ol>
+<li>hive的核心概念</li>
+<li>hive与数据库的区别</li>
+<li>hive的架构原理</li>
+<li>hive的交互方式</li>
+<li>hive的数据类型</li>
+<li>hive的DDL语法操作</li>
+</ol>
+<h2 id="三、课堂目标"><a href="#三、课堂目标" class="headerlink" title="三、课堂目标"></a>三、课堂目标</h2><ol>
+<li><p>理解hive的核心概念和架构原理</p>
+</li>
+<li><p>掌握hive的优缺点</p>
+</li>
+<li><p>掌握hive交互方式</p>
+</li>
+<li><p>掌握hive的数据类型</p>
+</li>
+<li><p>掌握hive的DDL语法及操作</p>
+</li>
+</ol>
+<h2 id="四、知识要点"><a href="#四、知识要点" class="headerlink" title="四、知识要点"></a>四、知识要点</h2><h3 id="1-数据仓库（15分钟）"><a href="#1-数据仓库（15分钟）" class="headerlink" title="1. 数据仓库（15分钟）"></a>1. 数据仓库（15分钟）</h3><h4 id="1-1-数据仓库的基本概念"><a href="#1-1-数据仓库的基本概念" class="headerlink" title="1.1 数据仓库的基本概念"></a>1.1 数据仓库的基本概念</h4><ul>
+<li><p>数据仓库的英文名称为Data Warehouse，可简写为DW或DWH。</p>
+</li>
+<li><p>数据仓库的目的是构建<strong>面向分析</strong>的集成化数据环境，为企业提供决策支持（Decision Support）。它出于分析性报告和决策支持的目的而创建。</p>
+</li>
+<li><p>数据仓库本身并不“生产”任何数据，同时自身也不需要“消费”任何的数据，数据来源于外部，并且开放给外部应用，这也是为什么叫“仓库”，而不叫“工厂”的原因。</p>
+</li>
+</ul>
+<h4 id="1-2-数据仓库的主要特征"><a href="#1-2-数据仓库的主要特征" class="headerlink" title="1.2 数据仓库的主要特征"></a>1.2 数据仓库的主要特征</h4><ul>
+<li>数据仓库是面向主题的（Subject-Oriented）、集成的（Integrated）、非易失的（Non-Volatile）和时变的（Time-Variant ）数据集合，用以支持管理决策。</li>
+</ul>
+<img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/image-20201012101029922.png" alt="image-20201012101029922" style="zoom:30%;">
+
+<h4 id="1-3-数据仓库与数据库区别"><a href="#1-3-数据仓库与数据库区别" class="headerlink" title="1.3 数据仓库与数据库区别"></a>1.3 数据仓库与数据库区别</h4><ul>
+<li><p>数据库与数据仓库的区别实际讲的是OLTP 与 OLAP 的区别。 </p>
+</li>
+<li><p>操作型处理，叫联机事务处理 OLTP（On-Line Transaction Processing），也可以称面向交易的处理系统，它是针对具体业务在数据库联机的日常操作，通常对少数记录进行查询、修改。用户较为关心操作的响应时间、数据的安全性、完整性和并发支持的用户数等问题。传统的数据库系统作为数据管理的主要手段，主要用于操作型处理OLTP。 </p>
+</li>
+<li><p>分析型处理，叫联机分析处理 OLAP（On-Line Analytical Processing），一般针对某些主题的历史数据进行分析，支持管理决策。</p>
+</li>
+<li><p>首先要明白，数据仓库的出现，并不是要取代数据库。</p>
+</li>
+<li><p>数据库是面向事务的设计，数据仓库是面向主题设计的。</p>
+<ul>
+<li><p>数据库一般存储业务数据，数据仓库存储的一般是历史数据。</p>
+</li>
+<li><p><strong>数据库</strong>设计是尽量避免冗余，一般针对某一业务应用进行设计；比如一张简单的User表，记录用户名、密码等简单数据即可，符合业务应用，但是不符合分析；<strong>数据仓库</strong>在设计是有意引入冗余，依照分析需求，分析维度、分析指标进行设计。</p>
+</li>
+<li><p>数据库是为捕获数据而设计，数据仓库是为分析数据而设计。</p>
+<ul>
+<li><p>以银行业务为例。数据库是事务系统的数据平台，客户在银行做的每笔交易都会写入数据库，被记录下来，这里，可以简单地理解为用数据库记账。数据仓库是分析系统的数据平台，它从事务系统获取数据，并做汇总、加工，为决策者提供决策的依据。比如，某银行某分行一个月发生多少交易，该分行当前存款余额是多少。如果存款又多，消费交易又多，那么该地区就有必要设立ATM了。 </p>
+</li>
+<li><p>显然，银行的交易量是巨大的，通常以百万甚至千万次来计算。事务系统是实时的，这就要求时效性，客户存一笔钱需要几十秒是无法忍受的，这就要求数据库只能存储很短一段时间的数据。而分析系统是事后的，它要提供<strong>关注时间段内</strong>所有的有效数据。这些数据是海量的，汇总计算起来也要慢一些，但是，只要能够提供有效的分析数据就达到目的了。 </p>
+</li>
+</ul>
+</li>
+<li><p>数据仓库，是在数据库已经大量存在的情况下，为了进一步挖掘数据资源、为了决策需要而产生的，它决不是所谓的“大型数据库”。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-4-数据仓库分层架构"><a href="#1-4-数据仓库分层架构" class="headerlink" title="1.4 数据仓库分层架构"></a>1.4 数据仓库分层架构</h4><ul>
+<li><p>按照数据流入流出的过程，数据仓库架构可分为三层——<strong>源数据层</strong>、<strong>数据仓库层</strong>、<strong>数据应用层。</strong>                            </p>
+</li>
+<li><p>数据仓库的数据来源于不同的源数据，并提供多样的数据应用，数据自下而上流入数据仓库后向上层开放应用，而数据仓库只是中间集成化数据管理的一个平台。</p>
+</li>
+<li><p>源数据层（ODS）：此层数据无任何更改，直接沿用外围系统数据结构和数据，不对外开放；为临时存储层，是接口数据的临时存储区域，为后一步的数据处理做准备。</p>
+</li>
+<li><p>数据仓库层（DW）：也称为细节层，DW层的数据应该是一致的、准确的、干净的数据，即对源系统数据进行了清洗（去除了杂质）后的数据。</p>
+</li>
+<li><p>数据应用层（DA或APP）：前端应用直接读取的数据源；根据报表、专题分析需求而计算生成的数据。</p>
+</li>
+<li><p>数据仓库从各数据源获取数据及在数据仓库内的数据转换和流动都可以认为是ETL（抽取Extra, 转化Transfer, 装载Load）的过程，ETL是数据仓库的流水线，也可以认为是数据仓库的血液，它维系着数据仓库中数据的新陈代谢，而数据仓库日常的管理和维护工作的大部分精力就是保持ETL的正常和稳定。</p>
+</li>
+<li><p>为什么要对数据仓库分层？</p>
+<ul>
+<li>用空间换时间，通过大量的预处理来提升应用系统的用户体验（效率），因此数据仓库会存在大量冗余的数据；</li>
+<li>不分层的话，如果源业务系统的业务规则发生变化将会影响整个数据清洗过程，工作量巨大。</li>
+<li>通过数据分层管理可以简化数据清洗的过程，因为把原来一步的工作分到了多个步骤去完成，相当于把一个复杂的工作拆成了多个简单的工作，把一个大的黑盒变成了一个白盒，每一层的处理逻辑都相对简单和容易理解，这样我们比较容易保证每一个步骤的正确性，当数据发生错误的时候，往往我们只需要局部调整某个步骤即可。</li>
+</ul>
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/image-20201012101134818.png" alt="image-20201012101134818"></p>
+</li>
+</ul>
+<h3 id="2-Hive（20分钟）"><a href="#2-Hive（20分钟）" class="headerlink" title="2. Hive（20分钟）"></a>2. Hive（20分钟）</h3><h4 id="2-1-Hive的概念"><a href="#2-1-Hive的概念" class="headerlink" title="2.1 Hive的概念"></a>2.1 Hive的概念</h4><ul>
+<li><p>Hive是基于Hadoop的一个数据仓库工具</p>
+<ul>
+<li><p>可以将结构化的数据文件映射为一张数据库表，并提供类SQL查询功能。</p>
+</li>
+<li><p>其本质是将SQL转换为MapReduce的任务进行运算，底层由HDFS来提供数据的存储支持，说白了hive可以理解为一个将SQL转换为MapReduce任务的工具，甚至更进一步可以说hive就是一个MapReduce的客户端</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/Snipaste_2019-07-10_23-23-31.png" alt></p>
+<h4 id="2-2-Hive与数据库的区别"><a href="#2-2-Hive与数据库的区别" class="headerlink" title="2.2 Hive与数据库的区别"></a>2.2 Hive与数据库的区别</h4><p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/2018040319335283.png" alt></p>
+<ul>
+<li><p>Hive 具有 SQL 数据库的外表，但应用场景完全不同。</p>
+</li>
+<li><p>Hive 只适合用来做海量离线数据统计分析，也就是数据仓库。</p>
+</li>
+</ul>
+<h4 id="2-3-Hive的优缺点"><a href="#2-3-Hive的优缺点" class="headerlink" title="2.3 Hive的优缺点"></a>2.3 Hive的优缺点</h4><ul>
+<li><p>优点</p>
+</li>
+<li><p><strong>操作接口采用类SQL语法</strong>，提供快速开发的能力（简单、容易上手）。</p>
+<ul>
+<li><p><strong>避免了去写MapReduce</strong>，减少开发人员的学习成本。</p>
+</li>
+<li><p><strong>Hive支持用户自定义函数</strong>，用户可以根据自己的需求来实现自己的函数。</p>
+</li>
+</ul>
+</li>
+<li><p>缺点</p>
+<ul>
+<li><p><strong>Hive 的查询延迟很严重</strong></p>
+</li>
+<li><p>hadoop jar  xxxx.jar  xxx.class /input /output</p>
+<ul>
+<li><p>进行任务的划分，然后进行计算资源的申请</p>
+</li>
+<li><p>map 0%  reduce 0%</p>
+</li>
+<li><p>map 10%  reduce 0%</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Hive 不支持事务</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-4-Hive架构原理"><a href="#2-4-Hive架构原理" class="headerlink" title="2.4 Hive架构原理"></a>2.4 Hive架构原理</h4><p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/2019-07-11_11-08-35.png" alt></p>
+<ul>
+<li><p>1、用户接口：Client</p>
+<ul>
+<li>CLI（hive shell）</li>
+</ul>
+</li>
+<li><p>JDBC/ODBC(java访问hive)</p>
+</li>
+<li><p>WEBUI（浏览器访问hive）</p>
+</li>
+<li><p>2、元数据：Metastore</p>
+<ul>
+<li>元数据包括：表名、表所属的数据库（默认是default）、表的拥有者、列/分区字段、表的类型（是否是外部表）、表的数据所在目录等；</li>
+</ul>
+</li>
+<li><p>默认存储在自带的derby数据库中，推荐使用MySQL存储Metastore</p>
+</li>
+<li><p>3、Hadoop集群</p>
+</li>
+<li><p>使用HDFS进行存储，使用MapReduce进行计算。</p>
+</li>
+<li><p>4、Driver：驱动器</p>
+<ul>
+<li><p>解析器（SQL Parser） </p>
+<p>将SQL字符串转换成抽象语法树AST</p>
+<p>对AST进行语法分析，比如表是否存在、字段是否存在、SQL语义是否有误</p>
+</li>
+</ul>
+</li>
+<li><p>编译器（Physical Plan）：将AST编译生成<strong>逻辑执行计划</strong></p>
+</li>
+<li><p>优化器（Query Optimizer）：对逻辑执行计划进行优化</p>
+<ul>
+<li>执行器（Execution）：把逻辑执行计划转换成可以运行的<strong>物理计划</strong>。对于Hive来说默认就是mapreduce任务</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/hive1.png" alt="hive1"></p>
+<h3 id="3-Hive的交互方式"><a href="#3-Hive的交互方式" class="headerlink" title="3. Hive的交互方式"></a>3. Hive的交互方式</h3><ul>
+<li><p>Hive的交互方式主要有三种</p>
+</li>
+<li><p>使用Hive之前：</p>
+<ul>
+<li><p>先启动hadoop集群：因为hql语句会被编译成MR任务提交到集群运行；hive表数据一般存储在HDFS上</p>
+</li>
+<li><p>mysql服务：因为对hive操作过程中，需要访问mysql中存储元数据的库及表</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-1-Hive交互shell"><a href="#3-1-Hive交互shell" class="headerlink" title="3.1 Hive交互shell"></a>3.1 Hive交互shell</h4><ul>
+<li>在任意路径运行hive</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 ~]$ hive</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/Image201912101741.png" alt></p>
+<h4 id="3-2-Hive-JDBC服务"><a href="#3-2-Hive-JDBC服务" class="headerlink" title="3.2 Hive JDBC服务"></a>3.2 Hive JDBC服务</h4><ul>
+<li><p>启动hiveserver2服务，前台启动与后台启动方式二选一</p>
+</li>
+<li><p>前台启动</p>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 ~]$ hive --service hiveserver2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>后台启动</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 ~]$ nohup hive --service hiveserver2 &amp;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/Image201912101745.png" alt></p>
+<ul>
+<li><p>beeline连接hiveserver2服务</p>
+<p>若是前台启动hiveserver2，请再开启一个新会话窗口，然后使用beeline连接hive</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 ~]$ beeline --color&#x3D;true</span><br><span class="line">beeline&gt; !connect jdbc:hive2:&#x2F;&#x2F;node03:10000</span><br></pre></td></tr></table></figure>
+
+<pre><code>用户名hadoop，密码为空即可</code></pre><p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/Image201912101749.png" alt></p>
+<ul>
+<li>帮助信息</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0: jdbc:hive2://node03:10000&gt; help</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/Image201912101754.png" alt></p>
+<ul>
+<li>退出</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0: jdbc:hive2://node03:10000&gt; !quit</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-Hive的命令"><a href="#3-3-Hive的命令" class="headerlink" title="3.3  Hive的命令"></a>3.3  Hive的命令</h4><ul>
+<li>hive  -e hql语句<ul>
+<li>使用 –e 参数来直接执行hql语句</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 ~]$ hive -e "show databases"</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>hive  -f  sql文件</p>
+<p>使用 –f参数执行包含hql语句的文件</p>
+<p>node03执行以下命令准备hive执行脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 ~]$ cd /kkb/install/</span><br><span class="line">[hadoop@node03 install]$ vim hive.sql</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>​        文件内容如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create database if not exists myhive;</span><br></pre></td></tr></table></figure>
+
+<p>​        通过以下命令来执行我们的hive脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 install]$ hive -f /kkb/install/hive.sql</span><br></pre></td></tr></table></figure>
+
+<p>​        查看效果，成功执行hql语句，创建myhive数据库</p>
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/Image201912101938.png" alt></p>
+<h3 id="4-Hive的数据类型"><a href="#4-Hive的数据类型" class="headerlink" title="4. Hive的数据类型"></a>4. Hive的数据类型</h3><h4 id="4-1-基本数据类型"><a href="#4-1-基本数据类型" class="headerlink" title="4.1 基本数据类型"></a>4.1 基本数据类型</h4><table>
+<thead>
+<tr>
+<th align="center">类型名称</th>
+<th align="center">描述</th>
+<th align="center">举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">boolean</td>
+<td align="center">true/false</td>
+<td align="center">true</td>
+</tr>
+<tr>
+<td align="center">tinyint</td>
+<td align="center">1字节的有符号整数</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">smallint</td>
+<td align="center">2字节的有符号整数</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center"><strong>int</strong></td>
+<td align="center">4字节的有符号整数</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center"><strong>bigint</strong></td>
+<td align="center">8字节的有符号整数</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">float</td>
+<td align="center">4字节单精度浮点数</td>
+<td align="center">1.0</td>
+</tr>
+<tr>
+<td align="center"><strong>double</strong></td>
+<td align="center">8字节单精度浮点数</td>
+<td align="center">1.0</td>
+</tr>
+<tr>
+<td align="center"><strong>string</strong></td>
+<td align="center">字符串(不设长度)</td>
+<td align="center">“abc”</td>
+</tr>
+<tr>
+<td align="center">varchar</td>
+<td align="center">字符串（1-65355长度，超长截断）</td>
+<td align="center">“abc”</td>
+</tr>
+<tr>
+<td align="center">timestamp</td>
+<td align="center">时间戳</td>
+<td align="center">1563157873</td>
+</tr>
+<tr>
+<td align="center">date</td>
+<td align="center">日期</td>
+<td align="center">20190715</td>
+</tr>
+</tbody></table>
+<h4 id="4-2-复合数据类型"><a href="#4-2-复合数据类型" class="headerlink" title="4.2 复合数据类型"></a>4.2 复合数据类型</h4><table>
+<thead>
+<tr>
+<th align="center">类型名称</th>
+<th align="center">描述</th>
+<th align="center">举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">array</td>
+<td align="center">一组有序的字段，字段类型必须相同 array(元素1，元素2)</td>
+<td align="center">Array（1,2,3）</td>
+</tr>
+<tr>
+<td align="center">map</td>
+<td align="center">一组无序的键值对 map(k1,v1,k2,v2)</td>
+<td align="center">Map(‘a’,1,’b’,2)</td>
+</tr>
+<tr>
+<td align="center">struct</td>
+<td align="center">一组命名的字段，字段类型可以不同 struct(元素1，元素2)</td>
+<td align="center">Struct(‘a’,1,2,0)</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>array类型的字段的元素访问方式</p>
+<ul>
+<li>通过下标获取元素，下标从0开始</li>
+<li>如获取第一个元素<ul>
+<li>array[0]</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>map类型字段的元素访问方式</p>
+<ul>
+<li>通过键获取值</li>
+<li>如获取a这个key对应的value<ul>
+<li>map[‘a’]</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>struct类型字段的元素获取方式</p>
+<ul>
+<li>定义一个字段c的类型为struct{a int, b string}</li>
+<li>获取a和b的值<ul>
+<li>使用c.a 和c.b 获取其中的元素值</li>
+</ul>
+</li>
+<li>这里可以把这种类型看成是一个对象</li>
+</ul>
+</li>
+<li><p>示例：创建一张表，包含了array、map、struct类型的字段</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> complex(</span><br><span class="line">         col1 <span class="built_in">array</span>&lt;<span class="built_in">int</span>&gt;,</span><br><span class="line">         col2 <span class="keyword">map</span>&lt;<span class="keyword">string</span>,<span class="built_in">int</span>&gt;,</span><br><span class="line">         col3 <span class="keyword">struct</span>&lt;a:<span class="keyword">string</span>,b:<span class="built_in">int</span>,c:<span class="keyword">double</span>&gt;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="5-Hive的DDL操作"><a href="#5-Hive的DDL操作" class="headerlink" title="5. Hive的DDL操作"></a>5. Hive的DDL操作</h3><h4 id="5-1-数据库DDL操作"><a href="#5-1-数据库DDL操作" class="headerlink" title="5.1 数据库DDL操作"></a>5.1 数据库DDL操作</h4><h5 id="5-1-1-创建数据库"><a href="#5-1-1-创建数据库" class="headerlink" title="5.1.1 创建数据库"></a>5.1.1 创建数据库</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hive &gt; create database db_hive;</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">hive &gt; create database if not exists db_hive;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数据库在HDFS上的默认存储路径是/user/hive/warehouse/数据库名.db</li>
+</ul>
+<h5 id="5-1-2-显示所有数据库"><a href="#5-1-2-显示所有数据库" class="headerlink" title="5.1.2 显示所有数据库"></a>5.1.2 显示所有数据库</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; show databases;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-1-3-查询数据库"><a href="#5-1-3-查询数据库" class="headerlink" title="5.1.3 查询数据库"></a>5.1.3 查询数据库</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; show databases like 'db_hive*';</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-1-4-查看数据库详情"><a href="#5-1-4-查看数据库详情" class="headerlink" title="5.1.4 查看数据库详情"></a>5.1.4 查看数据库详情</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; desc database db_hive;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>显示数据库详细信息</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; desc database extended db_hive;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-1-5-切换当前数据库"><a href="#5-1-5-切换当前数据库" class="headerlink" title="5.1.5 切换当前数据库"></a>5.1.5 切换当前数据库</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive &gt; use db_hive;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-1-6-删除数据库"><a href="#5-1-6-删除数据库" class="headerlink" title="5.1.6 删除数据库"></a>5.1.6 删除数据库</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除为空的数据库</span></span><br><span class="line">hive&gt; drop database db_hive;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果删除的数据库不存在，最好采用if exists 判断数据库是否存在</span></span><br><span class="line">hive&gt; drop database if exists db_hive;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果数据库中有表存在，这里需要使用cascade强制删除数据库</span></span><br><span class="line">hive&gt; drop database if exists db_hive cascade;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-2-表DDL操作"><a href="#5-2-表DDL操作" class="headerlink" title="5.2 表DDL操作"></a>5.2 表DDL操作</h4><h5 id="5-2-1-建表语法介绍"><a href="#5-2-1-建表语法介绍" class="headerlink" title="5.2.1 建表语法介绍"></a>5.2.1 建表语法介绍</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> [<span class="keyword">EXTERNAL</span>] <span class="keyword">TABLE</span> [<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>] table_name </span><br><span class="line">[(col_name data_type [<span class="keyword">COMMENT</span> col_comment], ...)] </span><br><span class="line">[<span class="keyword">COMMENT</span> table_comment] </span><br><span class="line">[PARTITIONED <span class="keyword">BY</span> (col_name data_type [<span class="keyword">COMMENT</span> col_comment], ...)] 分区</span><br><span class="line">[CLUSTERED <span class="keyword">BY</span> (col_name, col_name, ...) 分桶</span><br><span class="line">[SORTED <span class="keyword">BY</span> (col_name [<span class="keyword">ASC</span>|<span class="keyword">DESC</span>], ...)] <span class="keyword">INTO</span> num_buckets BUCKETS] </span><br><span class="line">[<span class="keyword">ROW</span> <span class="keyword">FORMAT</span> row_format]  <span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> “分隔符”</span><br><span class="line">[<span class="keyword">STORED</span> <span class="keyword">AS</span> file_format] </span><br><span class="line">[LOCATION hdfs_path]</span><br></pre></td></tr></table></figure>
+
+<p>官网地址：<a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL</a></p>
+<ul>
+<li><p>字段解释说明</p>
+<ul>
+<li><p>CREATE TABLE    创建一个指定名字的表</p>
+</li>
+<li><p>EXTERNAL       创建一个外部表，在建表的同时指定一个指向实际数据的路径（LOCATION），指定表的数据保存在哪里</p>
+</li>
+<li><p>COMMENT       为表和列添加注释</p>
+</li>
+<li><p>PARTITIONED BY    创建分区表</p>
+</li>
+<li><p>CLUSTERED BY    创建分桶表</p>
+</li>
+<li><p>SORTED BY    按照字段排序（一般不常用）</p>
+</li>
+<li><p>ROW FORMAT    指定每一行中字段的分隔符</p>
+<ul>
+<li>row format delimited fields terminated by ‘\t’</li>
+</ul>
+</li>
+<li><p>STORED AS    指定存储文件类型</p>
+<ul>
+<li>常用的存储文件类型：SEQUENCEFILE（二进制序列文件）、TEXTFILE（文本）、ORCFILE（列式存储格式文件）</li>
+<li>如果文件数据是纯文本，可以使用STORED AS TEXTFILE。如果数据需要压缩，使用 STORED AS SEQUENCEFILE</li>
+</ul>
+</li>
+<li><p>LOCATION    指定表在HDFS上的存储位置。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-2-2-创建内部表"><a href="#5-2-2-创建内部表" class="headerlink" title="5.2.2 创建内部表"></a>5.2.2 创建内部表</h5><ul>
+<li>1、使用标准的建表语句直接建表</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> myhive;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> stu(<span class="keyword">id</span> <span class="built_in">int</span>, <span class="keyword">name</span> <span class="keyword">string</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> stu(<span class="keyword">id</span>,<span class="keyword">name</span>) <span class="keyword">values</span>(<span class="number">1</span>,<span class="string">"zhangsan"</span>);</span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span>  stu;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>2、查询建表法<ul>
+<li>通过AS 查询语句完成建表：将子查询的结果存入新表里</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> myhive.stu1 <span class="keyword">as</span> <span class="keyword">select</span> <span class="keyword">id</span>, <span class="keyword">name</span> <span class="keyword">from</span> stu;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 表中有数据</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> stu1;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>3、like建表法<ul>
+<li>根据已经存在的表结构创建表</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> myhive.stu2 <span class="keyword">like</span> stu;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 表中没有数据</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> stu2;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>4、查询表的类型</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive &gt; desc formatted myhive.stu;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/2019-07-12_14-33-00-1563156555810.png" alt="2019-07-12_14-33-00"></p>
+<ul>
+<li>hql示例：创建内部表并指定字段之间的分隔符，指定文件的存储格式，以及数据存放的位置</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> myhive.stu3(<span class="keyword">id</span> <span class="built_in">int</span>, <span class="keyword">name</span> <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span> </span><br><span class="line"><span class="keyword">stored</span> <span class="keyword">as</span> textfile </span><br><span class="line">location <span class="string">'/user/stu3'</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-2-3-创建外部表"><a href="#5-2-3-创建外部表" class="headerlink" title="5.2.3 创建外部表"></a>5.2.3 创建外部表</h5><ul>
+<li>外部表因为是指定其他的hdfs路径的数据加载到表当中来</li>
+<li>所以hive表会认为自己不完全独占这份数据，所以删除hive表的时候，数据仍然存放在hdfs当中，不会删掉</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">external</span> <span class="keyword">table</span> myhive.teacher (t_id <span class="keyword">string</span>, t_name <span class="keyword">string</span>) </span><br><span class="line"><span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建外部表的时候需要加上<strong>external</strong> 关键字</li>
+<li>location字段可以指定，也可以不指定<ul>
+<li>指定就是数据存放的具体目录</li>
+<li>不指定就是使用默认目录 /user/hive/warehouse</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/2019-07-12_14-51-53.png" alt="2019-07-12_14-51-53"></p>
+<ul>
+<li><p>向外部表当中加载数据：</p>
+<ul>
+<li>我们前面已经看到过通过insert的方式向内部表当中插入数据，外部表也可以通过insert的方式进行插入数据，只不过insert的方式，我们一般都不推荐</li>
+<li>实际工作当中我们都是使用load的方式来加载数据到内部表或者外部表</li>
+</ul>
+</li>
+<li><p>load数据可以从本地文件系统加载或者也可以从hdfs上面的数据进行加载</p>
+<ul>
+<li>从本地文件系统加载数据到teacher表当中去，将我们附件当汇总的数据资料都上传到node03服务器的/kkb/install/hivedatas路径下面去</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /kkb/install/hivedatas</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将数据都上传到/kkb/install/hivedatas路径下</li>
+<li>然后在hive客户端下执行以下操作</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load data local inpath '/kkb/install/hivedatas/teacher.csv' into table myhive.teacher;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从hdfs上面加载文件到teacher表里面去(将teacher.csv文件上传到hdfs的/kkb/hdfsload/hivedatas路径下)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd /kkb/install/hivedatas</span><br><span class="line">hdfs dfs -mkdir -p /kkb/hdfsload/hivedatas</span><br><span class="line">hdfs dfs -put teacher.csv /kkb/hdfsload/hivedatas</span><br><span class="line"><span class="meta">#</span><span class="bash"> 在hive的客户端当中执行</span></span><br><span class="line">load data inpath '/kkb/hdfsload/hivedatas' overwrite into table myhive.teacher;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="5-2-4-内部表与外部表的互相转换"><a href="#5-2-4-内部表与外部表的互相转换" class="headerlink" title="5.2.4 内部表与外部表的互相转换"></a>5.2.4 内部表与外部表的互相转换</h5><ul>
+<li>1、内部表转换为外部表</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将stu内部表改为外部表</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> stu <span class="keyword">set</span> tblproperties(<span class="string">'EXTERNAL'</span>=<span class="string">'TRUE'</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>2、外部表转换为内部表</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#把teacher外部表改为内部表</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> teacher <span class="keyword">set</span> tblproperties(<span class="string">'EXTERNAL'</span>=<span class="string">'FALSE'</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-2-5-内部表与外部表的区别"><a href="#5-2-5-内部表与外部表的区别" class="headerlink" title="5.2.5 内部表与外部表的区别"></a>5.2.5 内部表与外部表的区别</h5><ul>
+<li><p>1、建表语法的区别</p>
+<ul>
+<li>外部表在创建的时候需要加上external关键字</li>
+</ul>
+</li>
+<li><p>2、删除表之后的区别</p>
+<ul>
+<li>内部表删除后，表的元数据和真实数据都被删除了</li>
+<li>外部表删除后，仅仅只是把该表的元数据删除了，真实数据还在，后期还是可以恢复出来</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-2-6-内部表与外部表的使用时机"><a href="#5-2-6-内部表与外部表的使用时机" class="headerlink" title="5.2.6 内部表与外部表的使用时机"></a>5.2.6 内部表与外部表的使用时机</h5><ul>
+<li><p>内部表由于删除表的时候会同步删除HDFS的数据文件，所以确定如果一个表仅仅是你独占使用，其他人不使用的时候就可以创建内部表，如果一个表的文件数据，其他人也要使用，那么就创建外部表</p>
+</li>
+<li><p>一般外部表都是用在数据仓库的ODS层</p>
+</li>
+<li><p>内部表都是用在数据仓库的DW层</p>
+</li>
+</ul>
+<h4 id="5-2-7-Hive的分区表"><a href="#5-2-7-Hive的分区表" class="headerlink" title="5.2.7 Hive的分区表"></a>5.2.7 Hive的分区表</h4><ul>
+<li>如果hive当中所有的数据都存入到一个文件夹下面，那么在使用MR计算程序的时候，读取一整个目录下面的所有文件来进行计算，就会变得特别慢，因为数据量太大了</li>
+<li>实际工作当中一般都是计算前一天的数据，所以我们只需要将前一天的数据挑出来放到一个文件夹下面即可，专门去计算前一天的数据。</li>
+<li>这样就可以使用hive当中的分区表，通过分文件夹的形式，将每一天的数据都分成为一个文件夹，然后我们计算数据的时候，通过指定前一天的文件夹即可只计算前一天的数据。</li>
+<li>在大数据中，最常用的一种思想就是分治，我们可以把大的文件切割划分成一个个的小的文件，这样每次操作一个小的文件就会很容易了，同样的道理，在hive当中也是支持这种思想的，就是我们可以把大的数据，按照每天，或者每小时进行切分成一个个的小的文件，这样去操作小的文件就会容易得多了</li>
+</ul>
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/2019-07-15_11-35-37.png" alt="2019-07-15_11-35-37"></p>
+<ul>
+<li><p>在文件系统上建立文件夹，把表的数据放在不同文件夹下面，加快查询速度。</p>
+</li>
+<li><p>创建分区表语法</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; create table score(s_id string, c_id string, s_score int) partitioned by (month string) row format delimited fields terminated by '\t';</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建一个表带多个分区</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; create table score2 (s_id string,c_id string, s_score int) partitioned by (year string, month string, day string) row format delimited fields terminated by '\t';</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>加载数据到分区表当中去</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt;load data local inpath '/kkb/install/hivedatas/score.csv' into table score partition (month='201806');</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>加载数据到多分区表当中去</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; load data local inpath '/kkb/install/hivedatas/score.csv' into table score2 partition(year='2018', month='06', day='01');</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看分区</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; show  partitions  score;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>添加一个分区</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; alter table score add partition(month&#x3D;&#39;201805&#39;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>同时添加多个分区</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; alter table score add partition(month='201804') partition(month = '201803');</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>注意：添加分区之后就可以在hdfs文件系统当中看到表下面多了一个文件夹</p>
+</li>
+<li><p>删除分区</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; alter table score drop partition(month = '201806');</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p>外部分区表综合练习：</p>
+</li>
+<li><p>需求描述：</p>
+<ul>
+<li>现在有一个文件score.csv文件，里面有三个字段，分别是s_id string, c_id string, s_score int</li>
+<li>字段都是使用 \t进行分割</li>
+<li>存放在集群的这个目录下/scoredatas/day=20180607，这个文件每天都会生成，存放到对应的日期文件夹下面去</li>
+<li>文件别人也需要公用，不能移动</li>
+<li>请创建hive对应的表，并将数据加载到表中，进行数据统计分析，且删除表之后，数据不能删除</li>
+</ul>
+</li>
+<li><p>需求实现:</p>
+</li>
+<li><p>数据准备:</p>
+</li>
+<li><p>node03执行以下命令，将数据上传到hdfs上面去</p>
+<p>将我们的score.csv上传到node03服务器的/kkb/install/hivedatas目录下，然后将score.csv文件上传到HDFS的/scoredatas/day=20180607目录上</p>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /kkb/install/hivedatas/</span><br><span class="line">hdfs dfs -mkdir -p /scoredatas/day=20180607</span><br><span class="line">hdfs dfs -put score.csv /scoredatas/day=20180607/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建外部分区表，并指定文件数据存放目录</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; create external table score4(s_id string, c_id string, s_score int) partitioned by (day string) row format delimited fields terminated by '\t' location '/scoredatas';</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>进行表的修复，说白了就是建立我们表与我们数据文件之间的一个关系映射()</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (myhive)&gt; msck repair table score4;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修复成功之后即可看到数据已经全部加载到表当中去了</li>
+</ul>
+<h2 id="五、拓展点、未来计划、行业趋势（5分钟）"><a href="#五、拓展点、未来计划、行业趋势（5分钟）" class="headerlink" title="五、拓展点、未来计划、行业趋势（5分钟）"></a>五、拓展点、未来计划、行业趋势（5分钟）</h2><ul>
+<li><p>hive cli命令窗口查看本地文件系统</p>
+<ul>
+<li><p>与操作本地文件系统类似，这里需要使用 ! (感叹号)，并且最后需要加上 ;(分号) </p>
+</li>
+<li><p>例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">!ls &#x2F;home;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/Image201912111127.png" alt></p>
+</li>
+</ul>
+</li>
+<li><p>hive cli命令窗口查看HDFS文件系统</p>
+<ul>
+<li>与查看HDFS文件系统类似</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dfs -ls &#x2F;user;</span><br></pre></td></tr></table></figure>
+
+<p>  <img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/Image201912111128.png" alt></p>
+</li>
+<li><p>hive的底层执行引擎有3种</p>
+<ul>
+<li>mapreduce(默认)</li>
+<li>tez（支持DAG作业的计算框架）mr1–&gt;mr2 –&gt;mr3</li>
+<li>spark（基于内存的分布式计算框架）</li>
+</ul>
+</li>
+</ul>
+<h2 id="六、总结（5分钟）"><a href="#六、总结（5分钟）" class="headerlink" title="六、总结（5分钟）"></a>六、总结（5分钟）</h2><p><img src="/2020/10/12/%E5%88%9D%E8%AF%86Hive/assets/hive%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8.png" alt></p>
+<h2 id="七、作业"><a href="#七、作业" class="headerlink" title="七、作业"></a>七、作业</h2><ul>
+<li>使用hive的交互式方式操作hive</li>
+<li>使用Hive的DDL语法实现对数据库和表进行操作</li>
+</ul>
+<h2 id="八、互动问答"><a href="#八、互动问答" class="headerlink" title="八、互动问答"></a>八、互动问答</h2><h2 id="九、题库-本堂课知识点"><a href="#九、题库-本堂课知识点" class="headerlink" title="九、题库 - 本堂课知识点"></a>九、题库 - 本堂课知识点</h2><ul>
+<li>1、hive的安装部署</li>
+<li>2、hive的交互式方式</li>
+<li>3、Hive的DDL操作</li>
+</ul>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://chaoyang66.gitee.io/2020/10/12/%E5%88%9D%E8%AF%86Hive/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/" rel="tag">hive</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/11/27/vim%20%E5%91%BD%E4%BB%A4/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            vim 命令
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/09/30/hadoop3.1.4%20+%20hive3.1.2%20+%20tez0.10.0%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">hadoop3.1.4 + hive3.1.2 + tez0.10.1环境搭建</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "SctsT8yefP0D7VSA3skojjQJ-gzGzoHsz",
+    app_key: "m5U9PA8tUiK3NJFScBqsQ8pg",
+    path: window.location.pathname,
+    avatar: "mp",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2019-2020
+        <i class="ri-heart-fill heart_icon"></i> 张朝阳
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src=''></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/avatar.jpg" alt="奋斗的皮皮虾"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechatpay.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Subtitle -->
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="86"
+        src="//music.163.com/outchain/player?type=2&id=37653063&auto=1&height=66"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>
