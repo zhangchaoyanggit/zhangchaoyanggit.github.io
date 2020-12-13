@@ -187,7 +187,7 @@
 </ul>
 <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#更改以下内容，设置我们的hive的日志文件存放的路径，便于排查问题</span></span><br><span class="line"><span class="meta">hive.log.dir</span>=<span class="string">/kkb/install/apache-hive-3.1.2/logs/</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20201111101836343.png" alt="image-20201111101836343"></p>
+<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/assets/image-20201111101836343.png" alt="image-20201111101836343"></p>
 <h4 id="1-5-拷贝mysql驱动包"><a href="#1-5-拷贝mysql驱动包" class="headerlink" title="1.5 拷贝mysql驱动包"></a>1.5 拷贝mysql驱动包</h4><ul>
 <li>上传mysql驱动包，如<code>mysql-connector-java-5.1.38.jar</code>到<code>/kkb/soft</code>目录中</li>
 <li>由于运行hive时，需要向mysql数据库中读写元数据，所以==需要将mysql的驱动包上传到hive的lib目录下==</li>
@@ -236,7 +236,7 @@
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 ~]$ schematool -initSchema -dbType mysql -verbose</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20201104145352060.png" alt="image-20201104145352060"></p>
+<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/assets/image-20201104145352060.png" alt="image-20201104145352060"></p>
 <blockquote>
 <p>看到schemaTool completed 表示初始化成功</p>
 </blockquote>
@@ -252,7 +252,7 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show databases;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20201104154118088.png" alt="image-20201104154118088"></p>
+<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/assets/image-20201104154118088.png" alt="image-20201104154118088"></p>
 <ul>
 <li>说明hive安装成功</li>
 <li>退出cli</li>
@@ -286,13 +286,13 @@
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 hive]$ <span class="built_in">cd</span> /kkb/install/apache-hive-3.1.2/</span><br><span class="line">[hadoop@node03 hive]$ bin/hiveserver2  <span class="comment"># 启动警告信息可以忽略</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20201104152847036.png" alt="image-20201104152847036"></p>
+<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/assets/image-20201104152847036.png" alt="image-20201104152847036"></p>
 <ol start="5">
 <li>新建node03连接, 连接hiveserver2</li>
 </ol>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@node03 hive]$ cd /kkb/install/apache-hive-3.1.2/</span><br><span class="line">[hadoop@node03 hive]$ bin/beeline --color=true</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20201104153110962.png" alt="image-20201104153110962"></p>
+<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/assets/image-20201104153110962.png" alt="image-20201104153110962"></p>
 <ol start="6">
 <li>通过jdbc方式连接hiveserver2, 输入用户名和密码</li>
 </ol>
@@ -308,7 +308,7 @@
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0: jdbc:hive2:&#x2F;&#x2F;node03:10000&gt; show databases;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20201104153645880.png" alt="image-20201104153645880"></p>
+<p><img src="/2020/09/30/Hive%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/assets/image-20201104153645880.png" alt="image-20201104153645880"></p>
  
       <!-- reward -->
       
